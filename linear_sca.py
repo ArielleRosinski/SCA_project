@@ -38,7 +38,8 @@ def pre_processing(X,
         return jnp.array(X), pca_variance_captured
 
 
-def single_pair_loss(U_tilde, X, id_1, id_2):                           #U (N,d); X(K,N,T)
+                   
+def single_pair_S(U_tilde, X, id_1, id_2, operator = 'plus'):                           #U (N,d); X(K,N,T)
 
     Y = jnp.einsum('ji,jk->ik', U_tilde, X[id_1, :, :])                 #(d,T)
     Y_prime = jnp.einsum('ji,jk->ik', U_tilde, X[id_2, :, :])           #(d,T)
@@ -46,10 +47,13 @@ def single_pair_loss(U_tilde, X, id_1, id_2):                           #U (N,d)
     YY = jnp.einsum('ij,kj->ik', Y, Y_prime)                            #(d,d)
     YY_product = jnp.einsum('ij,lm->im', YY, YY)                        #(d,d)
 
-    S_pair = jnp.trace(YY)**2 - jnp.trace(YY_product)
-    return S_pair
-
-def loss(params, X, key, s_learn):  
+    if operator == 'plus':
+        return jnp.trace(YY)**2 - jnp.trace(YY_product)
+    
+    elif operator == 'minus':
+        return jnp.trace(YY)**2 + jnp.trace(YY_product)
+    
+def loss(params, X, key, s_learn, normalized = False):  
     K, N, T = X.shape
 
     if s_learn:
@@ -57,9 +61,10 @@ def loss(params, X, key, s_learn):
         s = params['s'] 
 
         s_normalized = jnp.sqrt(N) * (s**2) /  jnp.linalg.norm(s**2)
-        X = X * s_normalized[None, :, None] 
+        X = s_normalized[None, :, None] * X
     else:
         U = params
+        X = X
     
     U_tilde, _ = jnp.linalg.qr(U)
 
@@ -67,13 +72,17 @@ def loss(params, X, key, s_learn):
     indices = random.randint(key, shape=(num_pairs*2,), minval=0, maxval=N)
     index_pairs = indices.reshape((num_pairs, 2))
 
-    batched_loss = vmap(single_pair_loss, in_axes=(None, None, 0, 0))(U_tilde, X, index_pairs[:, 0], index_pairs[:, 1]) #(num_pairs)
-
-    S = (2 / (num_pairs**2) ) * jnp.sum(batched_loss)
-    return -S
+    batched_loss = vmap(single_pair_S, in_axes=(None, None, 0, 0))(U_tilde, X, index_pairs[:, 0], index_pairs[:, 1]) #(num_pairs)
+    
+    if normalized == False:
+        S = (2 / (num_pairs**2) ) * jnp.sum(batched_loss)
+        return -S
+    else: 
+        batched_normalizer = vmap(single_pair_S, in_axes=(None, None, 0, 0, None))(U_tilde, X, index_pairs[:, 0], index_pairs[:, 1], 'minus')
+        return jnp.sum(batched_loss) / jnp.sum(batched_normalizer)
 
 def update(params, X, optimizer, opt_state, key, s_learn):
-    grad_ = grad(loss)(params, X, key, s_learn)
+    grad_ = grad(loss)(params,X,key, s_learn)
   
     updates, opt_state_updated = optimizer.update(grad_, opt_state, params)
     params_updated = optax.apply_updates(params, updates)
@@ -101,13 +110,19 @@ def optimize(X, s_learn=False, iterations=10000, learning_rate=0.001, d=3, seed=
     opt_state = optimizer.init(params)
     
     ls_loss = []
+    ls_S_ratio = []
 
     for i in range(iterations):
         params, opt_state = update(params, X, optimizer, opt_state, keys[i], s_learn)
         
         loss_ = loss(params, X, keys[i], s_learn)
+        S_ratio = loss(params, X, keys[i], s_learn, normalized = True)
+
         ls_loss.append(loss_)
+        ls_S_ratio.append(S_ratio)
+        
         if i % 10 == 0:
-            print(f"Iteration {i}, S: {-loss_}")
+            print(f"Iteration {i}, S: {-loss_}, S_ratio: {S_ratio}")
     
-    return params, ls_loss
+    
+    return params, ls_loss, ls_S_ratio
