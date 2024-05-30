@@ -20,7 +20,7 @@ from absl import flags
 import sys
 
 flags.DEFINE_integer('seed', 42, 'Random seed to set')
-flags.DEFINE_integer('iterations', 10000, 'training iterations')
+flags.DEFINE_integer('iterations', 5000, 'training iterations')
 flags.DEFINE_float('learning_rate', 0.001, 'Initial learning rate.')
 flags.DEFINE_integer('d', 3, 'Subspace dimensionality')
 flags.DEFINE_string('path', '../datasets/churchland.npy',
@@ -111,7 +111,7 @@ def update(alpha_tilde, P, S, K_A_X, X, d, optimizer, opt_state, key):
     alpha_tilde_updated = optax.apply_updates(alpha_tilde, updates)
     return alpha_tilde_updated, opt_state_updated
 
-def optimize(P, S, K_A_X, X, iterations=10000, learning_rate=0.001, d=3, seed=42):
+def optimize(P, S, K_A_X, X, iterations=5000, learning_rate=0.001, d=3, seed=42):
     K, N, T = X.shape
     key = random.PRNGKey(seed)
     
@@ -142,7 +142,7 @@ def optimize(P, S, K_A_X, X, iterations=10000, learning_rate=0.001, d=3, seed=42
     return alpha_tilde, ls_loss, ls_S_ratio
 
 
-wandb.init(project="SCA-project-kernel", name=name, mode="disabled")
+wandb.init(project="SCA-project-kernel", name=name, mode="online")
 optimized_alpha_tilde, _,  _ = optimize(P, S, K_A_X, X, iterations= iterations, learning_rate= learning_rate, seed = seed )
 wandb.finish()
 
