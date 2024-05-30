@@ -27,6 +27,8 @@ flags.DEFINE_string('path', '../datasets/churchland.npy',
                      'dataset path')
 flags.DEFINE_string('run_name', 'a_linear_kernel',
                      'name of the run and of the saved file')
+flags.DEFINE_boolean('save', True,
+                     'Whether to save the learned parameters')
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
@@ -37,6 +39,7 @@ learning_rate = FLAGS.learning_rate
 path = FLAGS.path 
 d = FLAGS.d
 name = FLAGS.run_name
+save = FLAGS.save
 
 X_init = np.load(path) 
 
@@ -80,7 +83,8 @@ def loss(alpha_tilde, P, S, K_A_X, X, d, key, normalized = False):
     K, N, T = X.shape
     
     alpha_tilde_QR, _ = jnp.linalg.qr(alpha_tilde) 
-    alpha = jnp.dot(P , 1/jnp.sqrt(S))[:,None] * alpha_tilde_QR
+    #alpha = jnp.dot(P , 1/jnp.sqrt(S))[:,None] * alpha_tilde_QR
+    alpha = (P / jnp.sqrt(S)) @ alpha_tilde_QR
 
 
     alpha_reshaped = alpha.reshape(K,T,d)                           #(K, T, D)
@@ -138,7 +142,9 @@ def optimize(P, S, K_A_X, X, iterations=10000, learning_rate=0.001, d=3, seed=42
     return alpha_tilde, ls_loss, ls_S_ratio
 
 
-wandb.init(project="SCA-project-kernel", name=name, mode="online")
+wandb.init(project="SCA-project-kernel", name=name, mode="disabled")
 optimized_alpha_tilde, _,  _ = optimize(P, S, K_A_X, X, iterations= iterations, learning_rate= learning_rate, seed = seed )
 wandb.finish()
-np.save(f'../outputs/{name}', optimized_alpha_tilde)
+
+if save: 
+    np.save(f'../outputs/{name}', optimized_alpha_tilde)
