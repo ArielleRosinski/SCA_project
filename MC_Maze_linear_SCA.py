@@ -33,6 +33,8 @@ flags.DEFINE_string('path', "/Users/ariellerosinski/My Drive/Cambridge/Project/d
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
 
+
+
 path = FLAGS.path 
 
 X_raw = np.load(path).swapaxes(1,2)

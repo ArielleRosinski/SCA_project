@@ -21,6 +21,7 @@ import sys
 
 flags.DEFINE_integer('seed', 42, 'Random seed to set')
 flags.DEFINE_integer('iterations', 10000, 'training iterations')
+flags.DEFINE_float('learning_rate', 0.001, 'Initial learning rate.')
 flags.DEFINE_integer('d', 3, 'Subspace dimensionality')
 flags.DEFINE_string('path', '../datasets/churchland.npy',
                      'dataset path')
@@ -32,13 +33,14 @@ FLAGS(sys.argv)
 
 seed = FLAGS.seed
 iterations = FLAGS.iterations
+learning_rate = FLAGS.learning_rate
 path = FLAGS.path 
 d = FLAGS.d
 name = FLAGS.run_name
 
 X_init = np.load(path) 
 
-X, _ = pre_processing(X_init, center=False)
+X, _ = pre_processing(X_init, center=True)
 X = jnp.array(X)
 K, N, T = X.shape
 A = jnp.swapaxes(pre_processing(X_init)[0], 0, 1)       #(N, K, T)
@@ -137,6 +139,6 @@ def optimize(P, S, K_A_X, X, iterations=10000, learning_rate=0.001, d=3, seed=42
 
 
 wandb.init(project="SCA-project-kernel", name=name, mode="online")
-optimized_alpha_tilde, _,  _ = optimize(P, S, K_A_X, X, iterations= iterations, seed = seed )
+optimized_alpha_tilde, _,  _ = optimize(P, S, K_A_X, X, iterations= iterations, learning_rate= learning_rate, seed = seed )
 wandb.finish()
 np.save(f'../outputs/{name}', optimized_alpha_tilde)

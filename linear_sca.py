@@ -6,6 +6,7 @@ import optax
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import wandb
 
 def pre_processing(X,
                soft_normalize = 'churchland',
@@ -51,7 +52,7 @@ def single_pair_S(X, id_1, id_2, operator):
         return jnp.trace(XX)**2 + jnp.trace(XX_product)
 
 
-def compute_S(X, seed=42, iterations=100):
+def compute_S(X, seed=42, iterations=100, ratio=True):
     K, N, T = X.shape
     key = random.PRNGKey(seed)
     keys = random.split(key, num=iterations)
@@ -63,8 +64,12 @@ def compute_S(X, seed=42, iterations=100):
         index_pairs = indices.reshape((num_pairs, 2))
 
         batched_numerator = vmap(single_pair_S, in_axes=(None, 0, 0, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'minus')
-        batched_denominator = vmap(single_pair_S, in_axes=(None, 0, 0, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'plus') 
-        S_list.append( jnp.sum(batched_numerator) / jnp.sum(batched_denominator) )
+        if ratio:
+            batched_denominator = vmap(single_pair_S, in_axes=(None, 0, 0, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'plus') 
+            S_list.append( jnp.sum(batched_numerator) / jnp.sum(batched_denominator) )
+        else: 
+            S_list.append( (2 / (num_pairs**2) ) * jnp.sum(batched_numerator) )
+
     return S_list
 
 
@@ -149,7 +154,8 @@ def optimize(X, s_learn=False, iterations=10000, learning_rate=0.001, d=3, seed=
 
         ls_loss.append(loss_)
         ls_S_ratio.append(S_ratio)
-        
+
+        wandb.log({"loss_": loss_, "S_ratio": S_ratio})
         if i % 10 == 0:
             print(f"Iteration {i}, S: {-loss_}, S_ratio: {S_ratio}")
     
