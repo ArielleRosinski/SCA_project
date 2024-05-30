@@ -43,10 +43,10 @@ save = FLAGS.save
 
 X_init = np.load(path) 
 
-X, _ = pre_processing(X_init, center=False)
+X, _ = pre_processing(X_init, center=False, soft_normalize='max', pca=False)
 X = jnp.array(X)
 K, N, T = X.shape
-A = jnp.swapaxes(pre_processing(X_init)[0], 0, 1)       #(N, K, T)
+A = jnp.swapaxes(pre_processing(X_init, soft_normalize='max', pca=False)[0], 0, 1)       #(N, K, T)
 A = A.reshape(N,-1)                                                #(N, K*T)
 
 def K_X_Y_diagonal(X, Y, sigma_sqrd):
