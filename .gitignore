@@ -1,4 +1,4 @@
 
 .DS_Store
 __pycache__
-wandb/
+wandb/.ipynb_checkpoints/
