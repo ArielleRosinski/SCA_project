@@ -40,7 +40,7 @@ name = FLAGS.run_name
 
 X_init = np.load(path) 
 
-X, _ = pre_processing(X_init, center=True)
+X, _ = pre_processing(X_init, center=False)
 X = jnp.array(X)
 K, N, T = X.shape
 A = jnp.swapaxes(pre_processing(X_init)[0], 0, 1)       #(N, K, T)
