@@ -69,8 +69,9 @@ def single_pair_loss(alpha_H, K_A_X, id_1, id_2, operator = 'minus'):
     K_A_X_i = K_A_X[:,id_1,:]
     K_X_A_i = K_A_X[:,id_2,:].T
     
-    Q = alpha_H.T @ K_A_X_i @ K_X_A_i @ alpha_H                         #(KT,D).T @ (KT,T) and (T,KT) @ (KT,D) --> (D,T) @ (T,D) --> (D,D)
-    QQ_product = jnp.einsum('ij,lm->im', Q, Q)
+    #Q = alpha_H.T @ K_A_X_i @ K_X_A_i @ alpha_H                         #(KT,D).T @ (KT,T) and (T,KT) @ (KT,D) --> (D,T) @ (T,D) --> (D,D)
+    Q = jnp.einsum('kd,kt,tj,jm->dm', alpha_H, K_A_X_i, K_X_A_i, alpha_H)
+    QQ_product = jnp.einsum('ij,jm->im', Q, Q)
 
     if operator == 'minus':
         return jnp.trace(Q)**2 - jnp.trace(QQ_product)
@@ -142,7 +143,7 @@ def optimize(P, S, K_A_X, X, iterations=5000, learning_rate=0.001, d=3, seed=42)
     return alpha_tilde, ls_loss, ls_S_ratio
 
 
-wandb.init(project="SCA-project-kernel", name=name, mode="online")
+wandb.init(project="SCA-project-kernel", name=name, mode="disabled")
 optimized_alpha_tilde, _,  _ = optimize(P, S, K_A_X, X, iterations= iterations, learning_rate= learning_rate, seed = seed )
 wandb.finish()
 
