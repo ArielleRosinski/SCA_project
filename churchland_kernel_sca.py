@@ -43,7 +43,7 @@ save = FLAGS.save
 
 X_init = np.load(path) 
 
-X, _ = pre_processing(X_init, center=False)
+X, _ = pre_processing(X_init, center=True)
 X = jnp.array(X)
 K, N, T = X.shape
 A = jnp.swapaxes(pre_processing(X_init)[0], 0, 1)       #(N, K, T)
@@ -71,7 +71,9 @@ def single_pair_loss(alpha_H, K_A_X, id_1, id_2, operator = 'minus'):
     
     #Q = alpha_H.T @ K_A_X_i @ K_X_A_i @ alpha_H                         #(KT,D).T @ (KT,T) and (T,KT) @ (KT,D) --> (D,T) @ (T,D) --> (D,D)
     Q = jnp.einsum('kd,kt,tj,jm->dm', alpha_H, K_A_X_i, K_X_A_i, alpha_H)
-    QQ_product = jnp.einsum('ij,jm->im', Q, Q)
+    #QQ_product = jnp.einsum('ij,lm->im', Q, Q)
+    QQ_product = Q @ Q
+
 
     if operator == 'minus':
         return jnp.trace(Q)**2 - jnp.trace(QQ_product)
