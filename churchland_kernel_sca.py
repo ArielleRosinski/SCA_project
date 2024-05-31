@@ -150,4 +150,3 @@ wandb.finish()
 if save: 
     np.save(f'../outputs/{name}', optimized_alpha_tilde)
 
-#test
