@@ -143,7 +143,7 @@ def optimize(P, S, K_A_X, X, iterations=5000, learning_rate=0.001, d=3, seed=42)
     return alpha_tilde, ls_loss, ls_S_ratio
 
 
-wandb.init(project="SCA-project-kernel", name=name, mode="disabled")
+wandb.init(project="SCA-project-kernel", name=name, mode="online")
 optimized_alpha_tilde, _,  _ = optimize(P, S, K_A_X, X, iterations= iterations, learning_rate= learning_rate, seed = seed )
 wandb.finish()
 
