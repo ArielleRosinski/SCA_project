@@ -43,7 +43,8 @@ def pre_processing(X,
 
 def single_pair_S(X, id_1, id_2, operator):
     XX = jnp.einsum('ij,kj->ik', X[id_1, :, :], X[id_2, :, :])          #(N,N)
-    XX_product = jnp.einsum('ij,lm->im', XX, XX)                        #(N,N)
+    #XX_product = jnp.einsum('ij,lm->im', XX, XX)                        #(N,N)
+    XX_product = XX @ XX
 
     if operator == 'minus':
         return jnp.trace(XX)**2 - jnp.trace(XX_product)
@@ -80,7 +81,8 @@ def single_pair_loss(U_tilde, X, id_1, id_2, operator = 'minus'):               
     Y_prime = jnp.einsum('ji,jk->ik', U_tilde, X[id_2, :, :])           #(d,T)
 
     YY = jnp.einsum('ij,kj->ik', Y, Y_prime)                            #(d,d)
-    YY_product = jnp.einsum('ij,lm->im', YY, YY)                        #(d,d)
+    #YY_product = jnp.einsum('ij,lm->im', YY, YY)                        #(d,d)
+    YY_product = YY @ YY
 
     if operator == 'minus':
         return jnp.trace(YY)**2 - jnp.trace(YY_product)
