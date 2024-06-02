@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J mlmi-thesis-sca_run
+#SBATCH -J mlmi-sca
 #SBATCH -A MLMI-ar2217-SL2-GPU
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -31,5 +31,5 @@ d=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' $config
 dataset_path=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $config)
 save_path=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $config)
 
-python /rds/user/ar2217/hpc-work/SCA/SCA_project/MC_Maze_linear_SCA.py --d $d --dataset_path $dataset_path --save_path $save_path --iterations 5000
+python /rds/user/ar2217/hpc-work/SCA/SCA_project/MC_Maze_linear_SCA.py --d $d --dataset_path $dataset_path --save_path $save_path 
 

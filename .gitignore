@@ -2,6 +2,6 @@
 __pycache__
 wandb/
 
-.ipynb_checkpoints/
+.ipynb_checkpoints/*
 
-cluster_launch/
+cluster_launch/logs_sca/*

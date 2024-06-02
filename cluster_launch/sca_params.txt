@@ -1,3 +1,3 @@
 ArrayTaskID   d     dataset_path                                                         save_path
-1             2     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze
-2             3     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze
+1             3     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze       
+2             6     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze
