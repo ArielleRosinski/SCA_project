@@ -3,3 +3,5 @@ __pycache__
 wandb/
 
 .ipynb_checkpoints/
+
+cluster_launch/
