@@ -1,9 +1,0 @@
-/var/spool/slurm/slurmd/job53472941/slurm_script: line 18: module: command not found
-Traceback (most recent call last):
-  File "/rds/user/ar2217/hpc-work/SCA/SCA_project/MC_Maze_linear_SCA.py", line 42, in <module>
-    X_raw = np.load(path).swapaxes(1,2)
-            ^^^^^^^^^^^^^
-  File "/home/ar2217/.conda/envs/sca_env/lib/python3.11/site-packages/numpy/lib/npyio.py", line 427, in load
-    fid = stack.enter_context(open(os_fspath(file), "rb"))
-                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/Users/ariellerosinski/My Drive/Cambridge/Project/datasets/MC_Maze/psth.npy'
