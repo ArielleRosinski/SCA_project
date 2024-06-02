@@ -104,7 +104,7 @@ def loss(params, X, key, s_learn, normalized = False):
     
     U_tilde, _ = jnp.linalg.qr(U)
 
-    num_pairs = 10  
+    num_pairs = 100  
     indices = random.randint(key, shape=(num_pairs*2,), minval=0, maxval=N)
     index_pairs = indices.reshape((num_pairs, 2))
 

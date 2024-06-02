@@ -27,28 +27,31 @@ import sys
 
 flags.DEFINE_integer('seed', 42, 'Random seed to set')
 flags.DEFINE_integer('d', 3, 'Subspace dimensionality')
-flags.DEFINE_string('path', "/Users/ariellerosinski/My Drive/Cambridge/Project/datasets/MC_Maze/psth.npy",
+flags.DEFINE_string('dataset_path', "../datasets/MC_Maze/psth.npy",
+                     'dataset path')
+flags.DEFINE_string('save_path', "../outputs/MC_Maze",
                      'dataset path')
 
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
 
-path = FLAGS.path 
+dataset_path = FLAGS.dataset_path 
+save_path = FLAGS.save_path 
 d = FLAGS.d
 seed = FLAGS.seed
 
 
-X_raw = np.load(path).swapaxes(1,2)
+X_raw = np.load(dataset_path).swapaxes(1,2)
 K, N, T = X_raw.shape
 
 X, _ = pre_processing(X_raw, soft_normalize='max')
 X = jnp.array(X)
 X_pre_pca, _ = pre_processing(X_raw, soft_normalize='max', pca=False)
 
-wandb.init(project="SCA-project-MC_Maze", name=f"d={d}.2", mode="online")
+wandb.init(project="SCA-project-MC_Maze", name=f"d={d}.3", mode="online")
 U, ls_loss, ls_S_ratio = optimize(X,d=d, seed=seed) 
-np.save(f'../outputs/MC_Maze/U_psth_{d}d', U)
+np.save(f'{save_path}/U_psth_{d}d', U)
 wandb.finish()
 
 X_reshaped = np.concatenate(X_pre_pca.swapaxes(1,2))
@@ -58,9 +61,6 @@ PCs = pca.components_
 X_pca = X_pca.reshape(K, T, d).swapaxes(1,2)
 pca_variance_captured = pca.explained_variance_ratio_
 
-plot_2D(X_pca)
-plt.title(f"pca {var_explained(X_pre_pca, PCs.T):.2f}")
-
-np.save(f'../outputs/MC_Maze/pca_variance_captured_{d}d', pca_variance_captured)
-np.save(f'../outputs/MC_Maze/PCs_{d}d', PCs)
-np.save(f'../outputs/MC_Maze/X_pca_{d}d', X_pca)
+np.save(f'{save_path}/pca_variance_captured_{d}d', pca_variance_captured)
+np.save(f'{save_path}/PCs_{d}d', PCs)
+np.save(f'{save_path}/X_pca_{d}d', X_pca)
