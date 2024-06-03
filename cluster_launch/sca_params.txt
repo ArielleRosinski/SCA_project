@@ -1,3 +1,10 @@
-ArrayTaskID   d     dataset_path                                                         save_path
-1             3     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze       
-2             6     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze
+ArrayTaskID   d     dataset_path                                                         save_path                                              seed
+1             2     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze          43      
+2             3     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze          43
+3             4     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze          43      
+4             5     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze          43
+5             6     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze          43      
+6             7     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze          43
+7             8     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze          43
+8             9     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze          43      
+9             10    /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/psth.npy              /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze          43
