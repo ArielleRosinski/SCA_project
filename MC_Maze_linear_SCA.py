@@ -46,15 +46,16 @@ seed = FLAGS.seed
 iterations = FLAGS.iterations
 pre_processing_ = FLAGS.pre_processing_
 
-X_raw = np.load(dataset_path).swapaxes(1,2)
-K, N, T = X_raw.shape
 
 if pre_processing_:
+    X_raw = np.load(dataset_path).swapaxes(1,2)
     X, _ = pre_processing(X_raw, soft_normalize='max')
     X_pre_pca, _ = pre_processing(X_raw, soft_normalize='max', pca=False)
 else: 
     X = np.load("/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/X_softNormMax.npy")
     X_pre_pca = np.load("/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/X_softNormMax_pcaFalse.npy")
+
+K, _, T = X.shape
 
 wandb.init(project="SCA-project-MC_Maze", name=f"d={d}.5", mode="disabled")
 U, ls_loss, ls_S_ratio = optimize(X,d=d, seed=seed, iterations=100) 
@@ -65,10 +66,6 @@ U_qr, _ = jnp.linalg.qr(U)
 Y = jnp.einsum('ji,kjl->kil', U_qr, X)
 plot_3D(Y[:,:,:])
 plt.title(f"sca {var_explained(X, U_qr):.2f}")
-# plt.savefig(f'{save_path}/proj_{d}d')
-# np.save(f'{save_path}/Y_{d}d', Y)
-np.save(f'{save_path}/X_{d}d_2', X)
-np.save(f'{save_path}/Xraw_{d}d', X_raw)
 
 X_reshaped = np.concatenate(X_pre_pca.swapaxes(1,2))
 pca = PCA(d)
@@ -76,11 +73,6 @@ X_pca = pca.fit_transform(X_reshaped)
 PCs = pca.components_
 X_pca = X_pca.reshape(K, T, d).swapaxes(1,2)
 pca_variance_captured = pca.explained_variance_ratio_
-
-# plt.figure()
-# plot_3D(X_pca[:,:,:])
-# plt.savefig(f'{save_path}/proj_pca_{d}d')
-
-# np.save(f'{save_path}/pca_variance_captured_{d}d', pca_variance_captured)
-# np.save(f'{save_path}/PCs_{d}d', PCs)
-# np.save(f'{save_path}/X_pca_{d}d', X_pca)
+np.save(f'{save_path}/pca_variance_captured_{d}d', pca_variance_captured)
+np.save(f'{save_path}/PCs_{d}d', PCs)
+np.save(f'{save_path}/X_pca_{d}d', X_pca)
