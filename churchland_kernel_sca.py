@@ -23,12 +23,16 @@ flags.DEFINE_integer('seed', 42, 'Random seed to set')
 flags.DEFINE_integer('iterations', 10000, 'training iterations')
 flags.DEFINE_float('learning_rate', 0.001, 'Initial learning rate.')
 flags.DEFINE_integer('d', 3, 'Subspace dimensionality')
-flags.DEFINE_string('path', '../datasets/churchland.npy',
+flags.DEFINE_string('path', '/rds/user/ar2217/hpc-work/SCA/datasets/churchland.npy',
                      'dataset path')
-flags.DEFINE_string('run_name', 'a_linear_kernel',
+flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/Kernel',
+                     'save path')
+flags.DEFINE_string('name', 'a_linear_kernel',
                      'name of the run and of the saved file')
 flags.DEFINE_boolean('save', True,
                      'Whether to save the learned parameters')
+flags.DEFINE_boolean('pre_processing_', False,
+                     'Use pre_processing function versus load pre-processed X')
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
@@ -37,17 +41,22 @@ seed = FLAGS.seed
 iterations = FLAGS.iterations
 learning_rate = FLAGS.learning_rate
 path = FLAGS.path 
+save_path = FLAGS.save_path 
 d = FLAGS.d
-name = FLAGS.run_name
+name = FLAGS.name
 save = FLAGS.save
+pre_processing_ = FLAGS.pre_processing_
 
-X_init = np.load(path) 
-
-X, _ = pre_processing(X_init, center=True)
-X = jnp.array(X)
-K, N, T = X.shape
-A = jnp.swapaxes(pre_processing(X_init)[0], 0, 1)       #(N, K, T)
-A = A.reshape(N,-1)                                                #(N, K*T)
+if pre_processing_:
+    X_init = np.load(path) 
+    X, _ = pre_processing(X_init, center=False,soft_normalize='max')
+    K, N, T = X.shape       
+    A = jnp.swapaxes(pre_processing(X_init,soft_normalize='max')[0], 0, 1)       #(N, K, T)
+    A = A.reshape(N,-1)                                                          #(N, K*T)
+else:
+    X = np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/X_softNormMax.npy')
+    K, N, T = X.shape
+    A = np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/A_softNormMax.npy')
 
 def K_X_Y_diagonal(X, Y, sigma_sqrd):
     """For two spatial patterns X and Y, the kernel k(x_i,y_i) is equal to sum_i sigma_i^2 x_i y_i"""
@@ -86,7 +95,6 @@ def loss(alpha_tilde, P, S, K_A_X, X, d, key, normalized = False):
     K, N, T = X.shape
     
     alpha_tilde_QR, _ = jnp.linalg.qr(alpha_tilde) 
-    #alpha = jnp.dot(P , 1/jnp.sqrt(S))[:,None] * alpha_tilde_QR
     alpha = (P / jnp.sqrt(S)) @ alpha_tilde_QR
 
 
@@ -150,5 +158,5 @@ optimized_alpha_tilde, _,  _ = optimize(P, S, K_A_X, X, iterations= iterations, 
 wandb.finish()
 
 if save: 
-    np.save(f'../outputs/{name}', optimized_alpha_tilde)
+    np.save(f'{save_path}/{name}', optimized_alpha_tilde)
 
