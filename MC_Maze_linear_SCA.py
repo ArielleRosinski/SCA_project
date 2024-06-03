@@ -64,8 +64,7 @@ wandb.finish()
 
 U_qr, _ = jnp.linalg.qr(U)        
 Y = jnp.einsum('ji,kjl->kil', U_qr, X)
-plot_3D(Y[:,:,:])
-plt.title(f"sca {var_explained(X, U_qr):.2f}")
+np.save(f'{save_path}/Y_{d}d', Y)
 
 X_reshaped = np.concatenate(X_pre_pca.swapaxes(1,2))
 pca = PCA(d)
