@@ -32,7 +32,7 @@ def pre_processing(X,
         pca_variance_captured = None
 
         if pca:
-            X_reshaped = np.concatenate(X.swapaxes(1,2))
+            X_reshaped = X.swapaxes(1,2).reshape(-1, N)
             pca = PCA(num_pcs)
             X = pca.fit_transform(X_reshaped)
             X = X.reshape(K, T, num_pcs).swapaxes(1,2)
