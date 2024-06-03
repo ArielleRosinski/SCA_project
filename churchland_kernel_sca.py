@@ -32,6 +32,8 @@ flags.DEFINE_string('name', 'a_linear_kernel',
                      'name of the run and of the saved file')
 flags.DEFINE_boolean('save', True,
                      'Whether to save the learned parameters')
+flags.DEFINE_string('mode', 'disabled',
+                     'wanb mode')
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
@@ -44,7 +46,7 @@ save_path = FLAGS.save_path
 d = FLAGS.d
 name = FLAGS.name
 save = FLAGS.save
-
+mode = FLAGS.mode
 
 X_init = np.load(path)
 
@@ -60,8 +62,15 @@ means = jnp.mean(K_A_A_reshaped, axis=(0, 2), keepdims=True)     #(1, T, 1, T)
 K_A_A_tilde = (K_A_A_reshaped - means).reshape(K*T,K*T)          #(K*T,K*T)
 P, S, Pt = jnp.linalg.svd(K_A_A_tilde, full_matrices=False)      #P is (K*T, K*T) and S is (K*T,)
 
+# X = jnp.array(np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/X_centerFalse_softNormMax.npy'))
+# A = jnp.array(np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/A_softNormMax.npy'))
+# K, N, T = X.shape
+# K_A_X = K_X_Y_identity(A, X)                                    #(K*T, K, T)
+# K_A_A = K_X_Y_identity(A, A)
+# P = jnp.array(np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/P_centerFalse_softNormMax.npy'))
+# S = jnp.array(np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/S_centerFalse_softNormMax.npy'))
 
-wandb.init(project="SCA-project-kernel", name=name, mode="disabled")
+wandb.init(project="SCA-project-kernel", name=name, mode=mode)
 optimized_alpha_tilde, _,  _ = optimize(P, S, K_A_X, X, iterations= iterations, learning_rate= learning_rate, seed = seed )
 wandb.finish()
 
@@ -77,4 +86,4 @@ if save:
     projection = jnp.einsum('ij,imk->mjk', optimized_alpha_H, K_A_X)                #(K*T,d) @ (K*T, K, T) --> (K, d, T)
 
     plot_3D(projection)
-    plt.savefig(f'{save_path}/{name}_fig')
+    plt.savefig(f'{save_path}/{name}_fig.png')
