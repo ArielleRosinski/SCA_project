@@ -50,7 +50,7 @@ X = jnp.array(X)
 X_pre_pca, _ = pre_processing(X_raw, soft_normalize='max', pca=False)
 
 wandb.init(project="SCA-project-MC_Maze", name=f"d={d}.5", mode="online")
-U, ls_loss, ls_S_ratio = optimize(X,d=d, seed=seed, iterations=5000) 
+U, ls_loss, ls_S_ratio = optimize(X,d=d, seed=seed) 
 np.save(f'{save_path}/U_psth_{d}d', U)
 wandb.finish()
 
