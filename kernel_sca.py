@@ -16,6 +16,10 @@ def K_X_Y_diagonal(X, Y, sigma_sqrd):
 def K_X_Y_identity(X, Y):
     return jnp.dot(X.T, Y) 
 
+def K_X_Y_squared_exponential(X, Y, l=1.0, sigma_f=1.0):
+    sq_dist = np.sum((X.T[:, np.newaxis, :] - Y.T[np.newaxis, :, :])**2, axis=2)
+    return sigma_f**2 * np.exp(-0.5 / l**2 * sq_dist)
+
 
 def single_pair_loss(alpha_H, K_A_X, id_1, id_2, operator = 'minus'):
     K_A_X_i = K_A_X[:,id_1,:]
