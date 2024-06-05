@@ -27,6 +27,7 @@ def single_pair_loss(alpha_H, K_A_X, id_1, id_2, operator = 'minus'):
                   
     Q = jnp.einsum('kd,kt,tj,jm->dm', alpha_H, K_A_X_i, K_X_A_i, alpha_H)    #(KT,D).T @ (KT,T) and (T,KT) @ (KT,D) --> (D,T) @ (T,D) --> (D,D)
     QQ_product = Q @ Q                                                       # jnp.einsum('ij,jm->im', Q, Q)
+    #jax.debug.print("QQ_product: {}", QQ_product)
 
     if operator == 'minus':
         return jnp.trace(Q)**2 - jnp.trace(QQ_product)
@@ -40,11 +41,13 @@ def loss(alpha_tilde, P, S, K_A_X, X, d, key, normalized = False):
     
     alpha_tilde_QR, _ = jnp.linalg.qr(alpha_tilde) 
     alpha = (P / jnp.sqrt(S)) @ alpha_tilde_QR
+    #jax.debug.print("alpha: {}", alpha)
 
 
     alpha_reshaped = alpha.reshape(K,T,d)                           #(K, T, D)
     mean = jnp.mean(alpha_reshaped, axis=(0), keepdims=True)        #(1, T, D)
     alpha_H = (alpha_reshaped - mean).reshape(K*T,d)                #(K*T,D)
+    #jax.debug.print("alpha_H: {}", alpha_H)
 
     num_pairs = 100  
     indices = random.randint(key, shape=(num_pairs*2,), minval=0, maxval=N)
