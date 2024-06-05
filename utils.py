@@ -21,7 +21,7 @@ def pre_processing(X,
             to the firing rate range + 5 spikes per s) (Elsayed, 2017)"""
             range = jnp.max(X, axis=(0,2), keepdims=True) - jnp.min(X, axis=(0,2), keepdims=True)
             X = X / (range + soft_normalize_value)
-        else:
+        elif soft_normalize == 'max':
             norm_const = jnp.maximum(jnp.max(X, axis=(0,2),  keepdims=True ), 0.1)
             X = X / norm_const
                 
