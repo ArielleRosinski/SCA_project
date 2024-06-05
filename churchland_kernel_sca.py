@@ -1,9 +1,5 @@
 import numpy as np 
 
-import jax
-import jax.numpy as jnp
-from jax import grad, random, vmap
-
 import optax
 
 import math
@@ -19,6 +15,22 @@ import wandb
 from absl import app
 from absl import flags
 import sys
+
+import os
+
+os.environ['JAX_PLATFORMS'] = 'cpu'
+try:
+    import jax
+    from jax.lib import xla_bridge
+
+    if 'gpu' in jax.lib.xla_bridge.get_backend().platform:
+        os.environ['JAX_PLATFORMS'] = 'gpu'
+except Exception as e:
+    print(f"Switching to GPU failed with error: {str(e)}. Continuing with CPU.")
+
+import jax.numpy as jnp
+from jax import grad, random, vmap
+
 
 flags.DEFINE_integer('seed', 42, 'Random seed to set')
 flags.DEFINE_integer('iterations', 10000, 'training iterations')
@@ -50,10 +62,12 @@ mode = FLAGS.mode
 
 X_init = np.load(path)
 
-X, _ = pre_processing(X_init, center=False, soft_normalize='max')
+#X, _ = pre_processing(X_init, center=False, soft_normalize='max')
+X = jnp.array(np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/X_centerFalse_softNormMax.npy'))
 K, N, T = X.shape
-A = jnp.swapaxes(pre_processing(X_init,soft_normalize='max')[0], 0, 1)                  #(N, K, T)
-A = A.reshape(N,-1)                        #(N, K*T)
+#A = jnp.swapaxes(pre_processing(X_init,  center=False, soft_normalize='max')[0], 0, 1)                  #(N, K, T)
+#A = A.reshape(N,-1)                        #(N, K*T)
+A = jnp.array(np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/A_centerFalse_softNormMax.npy'))
 
 K_A_X = K_X_Y_identity(A, X)                                    #(K*T, K, T)
 K_A_A = K_X_Y_identity(A, A)
@@ -61,14 +75,6 @@ K_A_A_reshaped = K_A_A.reshape(K,T,K,T)                          #(K,T,K,T)
 means = jnp.mean(K_A_A_reshaped, axis=(0, 2), keepdims=True)     #(1, T, 1, T)
 K_A_A_tilde = (K_A_A_reshaped - means).reshape(K*T,K*T)          #(K*T,K*T)
 P, S, Pt = jnp.linalg.svd(K_A_A_tilde, full_matrices=False)      #P is (K*T, K*T) and S is (K*T,)
-
-# X = jnp.array(np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/X_centerFalse_softNormMax.npy'))
-# A = jnp.array(np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/A_softNormMax.npy'))
-# K, N, T = X.shape
-# K_A_X = K_X_Y_identity(A, X)                                    #(K*T, K, T)
-# K_A_A = K_X_Y_identity(A, A)
-# P = jnp.array(np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/P_centerFalse_softNormMax.npy'))
-# S = jnp.array(np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/S_centerFalse_softNormMax.npy'))
 
 wandb.init(project="SCA-project-kernel", name=name, mode=mode)
 optimized_alpha_tilde, _,  _ = optimize(P, S, K_A_X, X, iterations= iterations, learning_rate= learning_rate, seed = seed )
