@@ -4,7 +4,7 @@ from scipy.linalg import subspace_angles
 
 import jax
 import jax.numpy as jnp
-from jax import grad, random, vmap
+from jax import grad, random, vmap, jit
 import optax
 
 import wandb
@@ -17,9 +17,24 @@ def K_X_Y_identity(X, Y):
     return jnp.dot(X.T, Y) 
 
 def K_X_Y_squared_exponential(X, Y, l=1.0, sigma_f=1.0):
-    sq_dist = np.sum((X.T[:, np.newaxis, :] - Y.T[np.newaxis, :, :])**2, axis=2)
-    return sigma_f**2 * np.exp(-0.5 / l**2 * sq_dist)
+    sq_dist = jnp.sum((X.T[:, jnp.newaxis, :] - Y.T[jnp.newaxis, :, :])**2, axis=2)
+    return sigma_f**2 * jnp.exp(-0.5 / l**2 * sq_dist)
 
+@jit
+def qr_decomposition(A):
+    m, n = A.shape
+    Q = jnp.zeros((m, n))
+    R = jnp.zeros((n, n))
+    A_copy = A.copy()
+
+    for j in range(n):
+        R = R.at[j, j].set(jnp.linalg.norm(A_copy[:, j]))
+        Q = Q.at[:, j].set(A_copy[:, j] / R[j, j])
+        for i in range(j+1, n):
+            R = R.at[j, i].set(jnp.dot(Q[:, j].T, A_copy[:, i]))
+            A_copy = A_copy.at[:, i].set(A_copy[:, i] - Q[:, j] * R[j, i])
+
+    return Q, R
 
 def single_pair_loss(alpha_H, K_A_X, id_1, id_2, operator = 'minus'):
     K_A_X_i = K_A_X[:,id_1,:]
@@ -27,7 +42,6 @@ def single_pair_loss(alpha_H, K_A_X, id_1, id_2, operator = 'minus'):
                   
     Q = jnp.einsum('kd,kt,tj,jm->dm', alpha_H, K_A_X_i, K_X_A_i, alpha_H)    #(KT,D).T @ (KT,T) and (T,KT) @ (KT,D) --> (D,T) @ (T,D) --> (D,D)
     QQ_product = Q @ Q                                                       # jnp.einsum('ij,jm->im', Q, Q)
-    #jax.debug.print("QQ_product: {}", QQ_product)
 
     if operator == 'minus':
         return jnp.trace(Q)**2 - jnp.trace(QQ_product)
@@ -42,7 +56,6 @@ def loss(alpha_tilde, P, S, K_A_X, X, d, key, normalized = False):
     alpha_tilde_QR, _ = jnp.linalg.qr(alpha_tilde) 
     alpha = (P / jnp.sqrt(S)) @ alpha_tilde_QR
     #jax.debug.print("alpha: {}", alpha)
-
 
     alpha_reshaped = alpha.reshape(K,T,d)                           #(K, T, D)
     mean = jnp.mean(alpha_reshaped, axis=(0), keepdims=True)        #(1, T, D)
