@@ -7,7 +7,7 @@ from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import wandb
-
+from itertools import combinations
 
                    
 def single_pair_loss(U_tilde, X, id_1, id_2, operator = 'minus'):                           #U (N,d); X(K,N,T)
@@ -40,8 +40,11 @@ def loss(params, X, key, s_learn, normalized = False):
     U_tilde, _ = jnp.linalg.qr(U)
 
     num_pairs = 100  
-    indices = random.randint(key, shape=(num_pairs*2,), minval=0, maxval=N)
+    indices = random.randint(key, shape=(num_pairs*2,), minval=0, maxval=K)
     index_pairs = indices.reshape((num_pairs, 2))
+    # all_combinations = jnp.array(list(combinations(range(K), 2)))
+    # indices = random.randint(key, shape=(num_pairs,), minval=0, maxval=all_combinations.shape[0])
+    # index_pairs = all_combinations[indices]
 
     batched_loss = vmap(single_pair_loss, in_axes=(None, None, 0, 0))(U_tilde, X, index_pairs[:, 0], index_pairs[:, 1]) #(num_pairs)
     

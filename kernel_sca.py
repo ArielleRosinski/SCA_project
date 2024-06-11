@@ -9,6 +9,8 @@ import optax
 
 import wandb
 
+from itertools import combinations
+
 def K_X_Y_diagonal(X, Y, sigma_sqrd):
     """For two spatial patterns X and Y, the kernel k(x_i,y_i) is equal to sum_i sigma_i^2 x_i y_i"""
     return jnp.dot(X.T * sigma_sqrd, Y) 
@@ -63,8 +65,11 @@ def loss(alpha_tilde, P, S, K_A_X, X, d, key, normalized = False):
     #jax.debug.print("alpha_H: {}", alpha_H)
 
     num_pairs = 100  
-    indices = random.randint(key, shape=(num_pairs*2,), minval=0, maxval=N)
+    indices = random.randint(key, shape=(num_pairs*2,), minval=0, maxval=K)  #--> this implementation works too but there was a bug (N instead of K)
     index_pairs = indices.reshape((num_pairs, 2))
+    # all_combinations = jnp.array(list(combinations(range(K), 2)))
+    # indices = random.randint(key, shape=(num_pairs,), minval=0, maxval=all_combinations.shape[0])
+    # index_pairs = all_combinations[indices]
 
     batched_loss = vmap(single_pair_loss, in_axes=(None, None, 0, 0))(alpha_H, K_A_X, index_pairs[:, 0], index_pairs[:, 1]) #(num_pairs)
 

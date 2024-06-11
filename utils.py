@@ -7,6 +7,7 @@ from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import wandb
+from itertools import combinations
 
 def pre_processing(X,
                soft_normalize = 'churchland',
@@ -110,8 +111,11 @@ def compute_S(X, seed=42, iterations=1000, num_pairs = 100, ratio=True):
 
     S_list = []
     for i in range(iterations):
-        indices = random.randint(keys[i], shape=(num_pairs*2,), minval=0, maxval=N)
+        indices = random.randint(keys[i], shape=(num_pairs*2,), minval=0, maxval=K)
         index_pairs = indices.reshape((num_pairs, 2))
+        # all_combinations = jnp.array(list(combinations(range(K), 2)))
+        # indices = random.randint(keys[i], shape=(num_pairs,), minval=0, maxval=all_combinations.shape[0])
+        # index_pairs = all_combinations[indices]
 
         batched_numerator = vmap(single_pair_S, in_axes=(None, 0, 0, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'minus')
         if ratio:
