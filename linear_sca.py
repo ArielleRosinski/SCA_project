@@ -9,39 +9,6 @@ from mpl_toolkits.mplot3d import Axes3D
 import wandb
 
 
-def single_pair_S(X, id_1, id_2, operator):
-    XX = jnp.einsum('ij,kj->ik', X[id_1, :, :], X[id_2, :, :])          #(N,N)
-    #XX_product = jnp.einsum('ij,lm->im', XX, XX)                        #(N,N)
-    XX_product = XX @ XX
-
-    if operator == 'minus':
-        return jnp.trace(XX)**2 - jnp.trace(XX_product)
-    
-    elif operator == 'plus':
-        return jnp.trace(XX)**2 + jnp.trace(XX_product)
-
-
-def compute_S(X, seed=42, iterations=100, ratio=True):
-    K, N, T = X.shape
-    key = random.PRNGKey(seed)
-    keys = random.split(key, num=iterations)
-
-    S_list = []
-    for i in range(iterations):
-        num_pairs = 100  
-        indices = random.randint(keys[i], shape=(num_pairs*2,), minval=0, maxval=N)
-        index_pairs = indices.reshape((num_pairs, 2))
-
-        batched_numerator = vmap(single_pair_S, in_axes=(None, 0, 0, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'minus')
-        if ratio:
-            batched_denominator = vmap(single_pair_S, in_axes=(None, 0, 0, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'plus') 
-            S_list.append( jnp.sum(batched_numerator) / jnp.sum(batched_denominator) )
-        else: 
-            S_list.append( (2 / (num_pairs**2) ) * jnp.sum(batched_numerator) )
-
-    return S_list
-
-
                    
 def single_pair_loss(U_tilde, X, id_1, id_2, operator = 'minus'):                           #U (N,d); X(K,N,T)
 
