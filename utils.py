@@ -125,3 +125,12 @@ def compute_S(X, seed=42, iterations=1000, num_pairs = 100, ratio=True):
             S_list.append( (2 / (num_pairs**2) ) * jnp.sum(batched_numerator) )
 
     return S_list
+
+def compute_S_all_pairs(X):
+    K, _, _ = X.shape
+    index_pairs = jnp.array(list(combinations(range(K), 2)))
+
+    batched_numerator = vmap(single_pair_S, in_axes=(None, 0, 0, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'minus')
+    batched_denominator = vmap(single_pair_S, in_axes=(None, 0, 0, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'plus') 
+
+    return jnp.sum(batched_numerator) / jnp.sum(batched_denominator) 
