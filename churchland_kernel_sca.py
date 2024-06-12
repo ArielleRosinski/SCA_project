@@ -21,8 +21,8 @@ import os
 os.environ['JAX_PLATFORMS'] = 'cpu'
 try:
     import jax
+    jax.config.update("jax_enable_x64", True)
     from jax.lib import xla_bridge
-
     if 'gpu' in jax.lib.xla_bridge.get_backend().platform:
         os.environ['JAX_PLATFORMS'] = 'gpu'
 except Exception as e:
