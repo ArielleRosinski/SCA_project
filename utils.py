@@ -1,13 +1,16 @@
 import numpy as np 
+from numpy.linalg import qr, svd
 import jax
 import jax.numpy as jnp
 from jax import grad, random, vmap
 import optax
 from sklearn.decomposition import PCA
+from sklearn.linear_model import ElasticNetCV, LinearRegression, RidgeCV
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import wandb
 from itertools import combinations
+from scipy.integrate import solve_ivp
 
 def pre_processing(X,
                soft_normalize = 'churchland',
@@ -171,3 +174,24 @@ def compute_S_all_pairs(X):
     batched_denominator = vmap(single_pair_S, in_axes=(None, 0, 0, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'plus') 
 
     return jnp.sum(batched_numerator) / jnp.sum(batched_denominator) 
+
+def get_reg(X_train,y_train,X_test, y_test):
+    regr = RidgeCV()
+    reg = regr.fit(X_train, y_train)   
+    return reg.score(X_test, y_test)   
+
+def principal_angle(Y, X_pca, d, smaller=True):
+    Q_A, _ = qr(Y.swapaxes(1,2).reshape(-1,d), mode='reduced')
+    Q_B, _ = qr(X_pca.swapaxes(1,2).reshape(-1,d), mode='reduced')
+        
+    M = np.dot(Q_A.T, Q_B)
+        
+    _, singular_values, _ = svd(M)
+    
+    angles = np.arccos(singular_values)
+    angles = np.rad2deg(np.sort(angles)[::-1])
+    
+    if smaller:
+        return angles[-1]
+    else:
+        return angles
