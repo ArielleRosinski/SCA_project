@@ -90,6 +90,43 @@ def plot_3D(Y):
     
     ax.spines[['top','right']].set_visible(False)
 
+def plot_3D_clean(Y, fontsize=13):
+    fig = plt.figure(figsize=(5, 5))
+    ax = fig.add_subplot(111, projection='3d')
+    cmap = plt.get_cmap('Blues_r')
+
+    num_time_points = Y.shape[-1]
+    indices_to_plot = np.arange(0,Y.shape[0],1)
+
+    for i in indices_to_plot:
+        x = Y[i, 0, :]  
+        y = Y[i, 1, :] 
+        z = Y[i, 2, :]  
+        
+        for t in range(num_time_points - 1):
+            ax.plot(x[t:t+2], y[t:t+2], z[t:t+2], color=cmap(t / (num_time_points - 1)), linewidth = 1)
+            #ax.plot(x[t:t+2], y[t:t+2], color=cmap(t / (num_time_points - 1)), linewidth = 1)
+    
+    ax.spines[['top','right']].set_visible(False)
+    ax.grid(False)  # Turn off the grid
+    # ax.set_xticks([])  # Remove x-axis ticks
+    # ax.set_yticks([])  # Remove y-axis ticks
+    # ax.set_zticks([])  # Remove z-axis ticks
+
+    ax.xaxis.pane.fill = False
+    ax.yaxis.pane.fill = False
+    ax.zaxis.pane.fill = False
+
+    # Removing the color of the panes (set to white to match most backgrounds)
+    ax.xaxis.pane.set_edgecolor('white')
+    ax.yaxis.pane.set_edgecolor('white')
+    ax.zaxis.pane.set_edgecolor('white')
+
+    ax.tick_params(axis='both', labelsize=fontsize)
+
+    # ax.xaxis.line.set_linewidth(0)
+    # ax.yaxis.line.set_linewidth(0)
+    # ax.zaxis.line.set_linewidth(0)
 
 
 def single_pair_S(X, id_1, id_2, operator):

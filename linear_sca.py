@@ -16,7 +16,6 @@ def single_pair_loss(U_tilde, X, id_1, id_2, operator = 'minus'):               
     Y_prime = jnp.einsum('ji,jk->ik', U_tilde, X[id_2, :, :])           #(d,T)
 
     YY = jnp.einsum('ij,kj->ik', Y, Y_prime)                            #(d,d)
-    #YY_product = jnp.einsum('ij,lm->im', YY, YY)                        #(d,d)
     YY_product = YY @ YY
 
     if operator == 'minus':
