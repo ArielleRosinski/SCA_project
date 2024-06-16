@@ -25,7 +25,7 @@ conda activate sca_env
 export OMP_NUM_THREADS=1
 
 
-config=/rds/user/ar2217/hpc-work/SCA/SCA_project/cluster_launch/sca_params.txt
+config=/rds/user/ar2217/hpc-work/SCA/SCA_project/cluster_launch/sca_params_2.txt
 
 d=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' $config)
 dataset_path=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $config)

@@ -5,3 +5,5 @@ wandb/
 .ipynb_checkpoints/*
 
 cluster_launch/logs_sca/*
+
+jPCA/*
