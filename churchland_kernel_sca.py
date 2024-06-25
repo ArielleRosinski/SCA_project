@@ -9,6 +9,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 from kernel_sca import *
 from utils import *
+from kernels import * 
 
 import wandb
 
@@ -46,6 +47,9 @@ flags.DEFINE_boolean('save', True,
                      'Whether to save the learned parameters')
 flags.DEFINE_string('mode', 'disabled',
                      'wanb mode')
+flags.DEFINE_string('kernel', 'gaussian',
+                     'type of kernel used')
+flags.DEFINE_integer('l', None, 'lengthscale')
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
@@ -59,18 +63,26 @@ d = FLAGS.d
 name = FLAGS.name
 save = FLAGS.save
 mode = FLAGS.mode
+kernel = FLAGS.kernel
+l = FLAGS.l
 
-X_init = np.load(path)
 
-#X, _ = pre_processing(X_init, center=False, soft_normalize='max')
-X = jnp.array(np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/X_centerFalse_softNormMax.npy'))
+
+X = jnp.array(np.load(path)) ##X, _ = pre_processing(X_init, center=False, soft_normalize='max')
 K, N, T = X.shape
-#A = jnp.swapaxes(pre_processing(X_init,  center=False, soft_normalize='max')[0], 0, 1)                  #(N, K, T)
-#A = A.reshape(N,-1)                        #(N, K*T)
-A = jnp.array(np.load('/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/A_centerFalse_softNormMax.npy'))
+A = jnp.swapaxes(X, 0, 1)                  #(N, K, T)
+A = A.reshape(N,-1)  
 
-K_A_X = K_X_Y_identity(A, X)                                    #(K*T, K, T)
-K_A_A = K_X_Y_identity(A, A)
+if kernel == 'gaussian':
+    K_A_X = np.zeros((K*T, K, T))
+    for k in range(K):
+        K_A_X[:,k,:] = K_X_Y_squared_exponential(A, X[k], l = l)
+    K_A_X = jnp.array(K_A_X)
+    K_A_A = jnp.array(K_X_Y_squared_exponential(A, A, l = l))
+elif kernel == 'linear':
+    K_A_X = K_X_Y_identity(A, X)                                    #(K*T, K, T)
+    K_A_A = K_X_Y_identity(A, A)
+
 K_A_A_reshaped = K_A_A.reshape(K,T,K,T)                          #(K,T,K,T)
 means = jnp.mean(K_A_A_reshaped, axis=(0, 2), keepdims=True)     #(1, T, 1, T)
 K_A_A_tilde = (K_A_A_reshaped - means).reshape(K*T,K*T)          #(K*T,K*T)
@@ -92,4 +104,6 @@ if save:
     projection = jnp.einsum('ij,imk->mjk', optimized_alpha_H, K_A_X)                #(K*T,d) @ (K*T, K, T) --> (K, d, T)
 
     plot_3D(projection)
-    plt.savefig(f'{save_path}/{name}_fig.png')
+    plt.savefig(f'{save_path}/projection_{d}d_fig.png')
+
+    np.save(f'{save_path}/projection_{d}d', projection)
