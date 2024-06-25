@@ -34,5 +34,5 @@ seed=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $5}' $con
 mode=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $6}' $config)
 l=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $7}' $config)
 
-python /rds/user/ar2217/hpc-work/SCA/SCA_project/churchland_kernel_SCA.py --d $d --path $path --save_path $save_path --seed $seed --mode $mode --l $l 
+python /rds/user/ar2217/hpc-work/SCA/SCA_project/churchland_kernel_sca.py --d $d --path $path --save_path $save_path --seed $seed --mode $mode --l $l 
 
