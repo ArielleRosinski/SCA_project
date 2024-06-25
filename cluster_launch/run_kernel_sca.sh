@@ -28,11 +28,11 @@ export OMP_NUM_THREADS=1
 config=/rds/user/ar2217/hpc-work/SCA/SCA_project/cluster_launch/kernel_sca_params.txt
 
 d=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' $config)
-dataset_path=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $config)
+path=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $config)
 save_path=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $config)
 seed=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $5}' $config)
 mode=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $6}' $config)
 l=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $7}' $config)
 
-python /rds/user/ar2217/hpc-work/SCA/SCA_project/churchland_kernel_SCA.py --d $d --dataset_path $dataset_path --save_path $save_path --seed $seed --mode $mode --l $l 
+python /rds/user/ar2217/hpc-work/SCA/SCA_project/churchland_kernel_SCA.py --d $d --path $path --save_path $save_path --seed $seed --mode $mode --l $l 
 
