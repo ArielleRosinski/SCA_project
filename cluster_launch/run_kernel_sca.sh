@@ -7,7 +7,7 @@
 #SBATCH --time=10:00:00
 #SBATCH --mail-type=NONE
 #SBATCH --array=1-9
-#SBATCH --output=logs_sca/kernel_sca_%A_%a.out
+#SBATCH --output=logs_kernel_sca/kernel_sca_%A_%a.out
 #SBATCH -p ampere
 
 . /etc/profile.d/modules.sh                # Leave this line (enables the module command)
