@@ -195,3 +195,17 @@ def principal_angle(Y, X_pca, d, smaller=True):
         return angles[-1]
     else:
         return angles
+    
+def get_loss_fig(ls_loss, ls_S_ratio):
+    plt.figure(figsize=(10,5))
+    plt.subplot(211)
+    plt.plot(ls_loss)
+    plt.grid()
+    plt.title(r"$-S(U) = -\|C^{(-)}\|_\mathrm{F}^2$")
+    plt.gca().spines[['top','right']].set_visible(False)
+    plt.subplot(212)
+    plt.plot(ls_S_ratio)
+    plt.title(r"$\frac{\|C^{(-)}\|_\mathrm{F}^2}{\|C^{(+)}\|_\mathrm{F}^2}$")
+    plt.gca().spines[['top','right']].set_visible(False)
+    plt.grid()
+    plt.subplots_adjust(hspace=0.5)

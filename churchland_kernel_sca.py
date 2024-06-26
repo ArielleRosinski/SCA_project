@@ -66,12 +66,15 @@ mode = FLAGS.mode
 kernel = FLAGS.kernel
 l = FLAGS.l
 
-print(f'Using d = {d}, l = {l}')
+print(f'Using d = {d}, l = {l}, kernel={kernel}')
 
-X = jnp.array(np.load(path)) ##X, _ = pre_processing(X_init, center=False, soft_normalize='max')
+# X = jnp.array(np.load(path)) ##X, _ = pre_processing(X_init, center=False, soft_normalize='max')
+X = jnp.array( np.load('/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/X_softNormMax_centerFalse.npy') )
 K, N, T = X.shape
-A = jnp.swapaxes(X, 0, 1)                  #(N, K, T)
-A = A.reshape(N,-1)  
+# A = jnp.swapaxes(X, 0, 1)                  #(N, K, T)
+# A = A.reshape(N,-1)  
+A = jnp.array( np.load('/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/A_softNormMax_centerFalse.npy') )
+
 
 if kernel == 'gaussian':
     K_A_X = np.zeros((K*T, K, T))
@@ -89,11 +92,11 @@ K_A_A_tilde = (K_A_A_reshaped - means).reshape(K*T,K*T)          #(K*T,K*T)
 P, S, Pt = jnp.linalg.svd(K_A_A_tilde, full_matrices=False)      #P is (K*T, K*T) and S is (K*T,)
 
 wandb.init(project="SCA-project-kernel", name=name, mode=mode)
-optimized_alpha_tilde, _,  _ = optimize(P, S, K_A_X, X, iterations= iterations, learning_rate= learning_rate, seed = seed )
+optimized_alpha_tilde, ls_loss,  ls_S_ratio = optimize(P, S, K_A_X, X, iterations= iterations, learning_rate= learning_rate, seed = seed )
 wandb.finish()
 
 if save: 
-    np.save(f'{save_path}/alpha_tilde_{d}d_l{l}', optimized_alpha_tilde)
+    np.save(f'{save_path}/alpha_tilde_{d}d_l{l}_{kernel}', optimized_alpha_tilde)
 
     alpha_tilde_QR, _ = jnp.linalg.qr(optimized_alpha_tilde) 
     alpha = (P / jnp.sqrt(S)) @ alpha_tilde_QR
@@ -103,8 +106,13 @@ if save:
     optimized_alpha_H = (alpha_reshaped - mean).reshape(K*T,d)                      #(K*T,d)
     projection = jnp.einsum('ij,imk->mjk', optimized_alpha_H, K_A_X)                #(K*T,d) @ (K*T, K, T) --> (K, d, T)
 
+    plt.figure()
     plot_3D(projection)
     plt.title(f's = {compute_S_all_pairs(projection)}')
-    plt.savefig(f'{save_path}/projection_{d}d_l{l}_fig.png')
+    plt.savefig(f'{save_path}/projection_{d}d_l{l}_{kernel}_fig.png')
 
-    np.save(f'{save_path}/projection_{d}d_l{l}', projection)
+    np.save(f'{save_path}/projection_{d}d_l{l}_{kernel}', projection)
+
+    plt.figure()
+    get_loss_fig(ls_loss, ls_S_ratio)
+    plt.savefig(f'{save_path}/loss_{d}d_l{l}_{kernel}_fig.png')
