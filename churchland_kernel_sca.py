@@ -104,6 +104,7 @@ if save:
     projection = jnp.einsum('ij,imk->mjk', optimized_alpha_H, K_A_X)                #(K*T,d) @ (K*T, K, T) --> (K, d, T)
 
     plot_3D(projection)
+    plt.title(f's = {compute_S_all_pairs(projection)}')
     plt.savefig(f'{save_path}/projection_{d}d_l{l}_fig.png')
 
     np.save(f'{save_path}/projection_{d}d_l{l}', projection)
