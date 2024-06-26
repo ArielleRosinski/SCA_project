@@ -37,7 +37,9 @@ flags.DEFINE_integer('seed', 42, 'Random seed to set')
 flags.DEFINE_integer('iterations', 1000, 'training iterations')
 flags.DEFINE_float('learning_rate', 0.01, 'Initial learning rate.')
 flags.DEFINE_integer('d', 3, 'Subspace dimensionality')
-flags.DEFINE_string('path', '/rds/user/ar2217/hpc-work/SCA/datasets/Churchland/churchland.npy',
+flags.DEFINE_string('path_X', '/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/X_softNormMax_centerFalse.npy',
+                     'dataset path')
+flags.DEFINE_string('path_A', '/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/A_softNormMax_centerFalse.npy',
                      'dataset path')
 flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/Kernel',
                      'save path')
@@ -57,7 +59,8 @@ FLAGS(sys.argv)
 seed = FLAGS.seed
 iterations = FLAGS.iterations
 learning_rate = FLAGS.learning_rate
-path = FLAGS.path 
+path_X = FLAGS.path_X 
+path_A = FLAGS.path_A 
 save_path = FLAGS.save_path 
 d = FLAGS.d
 name = FLAGS.name
@@ -69,11 +72,11 @@ l = FLAGS.l
 print(f'Using d = {d}, l = {l}, kernel={kernel}')
 
 # X = jnp.array(np.load(path)) ##X, _ = pre_processing(X_init, center=False, soft_normalize='max')
-X = jnp.array( np.load('/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/X_softNormMax_centerFalse.npy') )
+X = jnp.array( np.load(path_X) )
 K, N, T = X.shape
 # A = jnp.swapaxes(X, 0, 1)                  #(N, K, T)
 # A = A.reshape(N,-1)  
-A = jnp.array( np.load('/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/A_softNormMax_centerFalse.npy') )
+A = jnp.array( np.load(path_A) )
 
 
 if kernel == 'gaussian':
