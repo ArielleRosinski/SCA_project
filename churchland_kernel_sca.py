@@ -45,7 +45,7 @@ flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/Kernel',
                      'save path')
 flags.DEFINE_string('name', 'a_linear_kernel',
                      'name of the run and of the saved file')
-flags.DEFINE_boolean('save', True,
+flags.DEFINE_string('save', 'True',
                      'Whether to save the learned parameters')
 flags.DEFINE_string('mode', 'disabled',
                      'wanb mode')
@@ -95,10 +95,10 @@ K_A_A_tilde = (K_A_A_reshaped - means).reshape(K*T,K*T)          #(K*T,K*T)
 P, S, Pt = jnp.linalg.svd(K_A_A_tilde, full_matrices=False)      #P is (K*T, K*T) and S is (K*T,)
 
 wandb.init(project="SCA-project-kernel", name=name, mode=mode)
-optimized_alpha_tilde, ls_loss,  ls_S_ratio = optimize(P, S, K_A_X, X, iterations= iterations, learning_rate= learning_rate, seed = seed )
+optimized_alpha_tilde, ls_loss,  ls_S_ratio = optimize(P, S, K_A_X, X, iterations= iterations, learning_rate= learning_rate, seed = seed, d=d )
 wandb.finish()
 
-if save: 
+if save == 'True': 
     np.save(f'{save_path}/alpha_tilde_{d}d_l{l}_{kernel}', optimized_alpha_tilde)
 
     alpha_tilde_QR, _ = jnp.linalg.qr(optimized_alpha_tilde) 

@@ -32,7 +32,7 @@ def single_pair_loss(alpha_H, K_A_X, id_1, id_2, operator = 'minus'):
     K_X_A_i = K_A_X[:,id_2,:].T
                   
     Q = jnp.einsum('kd,kt,tj,jm->dm', alpha_H, K_A_X_i, K_X_A_i, alpha_H)    #(KT,D).T @ (KT,T) and (T,KT) @ (KT,D) --> (D,T) @ (T,D) --> (D,D)
-    QQ_product = Q @ Q                                                       # jnp.einsum('ij,jm->im', Q, Q)
+    QQ_product = jnp.einsum('ij,jm->im', Q, Q)                                # jnp.einsum('ij,jm->im', Q, Q) == Q @ Q   
 
     if operator == 'minus':
         return jnp.trace(Q)**2 - jnp.trace(QQ_product)
