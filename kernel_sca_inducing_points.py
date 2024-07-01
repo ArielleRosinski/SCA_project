@@ -23,12 +23,12 @@ def get_params(params, kernel_function):
         sigma_f = None 
     elif kernel_function == 'gaussian':
         l_tilde = params['l_tilde']      
-        l = jnp.exp(l_tilde)
+        l2 = l_tilde**2 + 0.01
 
         #sigma_f_tilde = params['sigma_f_tilde'] 
         #sigma_f = jnp.exp(sigma_f_tilde)
-        sigma_f = 1
-    return alpha_tilde, u, l, sigma_f
+        sigma_f = 0.1
+    return alpha_tilde, u, l2, sigma_f
 
 def get_alpha(params, A, X, kernel_function):
     K, N, T = X.shape
@@ -47,11 +47,10 @@ def get_alpha(params, A, X, kernel_function):
     mean = jnp.mean(K_A_u_reshaped, axis=(0), keepdims=True)             #(1, T, c)
     H_K_A_u = (K_A_u_reshaped - mean).reshape(K*T,c)                     #(K*T,c)           #K_A_A = jnp.einsum('kc,cj,mj ->km',  H_K_A_u, jnp.linalg.inv(K_u_u), H_K_A_u)       #K_A_u @ K_u_u @ K_A_u.T (K*T, K*T)
 
-    L = jnp.linalg.cholesky(K_u_u + jnp.identity(c) * 1e-6)
+    L = jnp.linalg.cholesky(K_u_u + jnp.identity(c) * 1e-5)
     Q, R = jnp.linalg.qr(H_K_A_u, mode='reduced')                                                                                        #(mode reduced Q(kt, c) R(c,c) versus complete Q (kt,kt) and R(KT, c))
     alpha_tilde_QR, _ = jnp.linalg.qr(alpha_tilde) 
-    alpha = jnp.einsum('kc, cl, lj, jd -> kd', Q, triangular_solve(R.T, jnp.eye(R.shape[0]), lower=True), L, alpha_tilde_QR) #(K*T, c) @ (c, c) @ (c, c) @ (c, d)
-
+    alpha = jnp.einsum('kc, cl, lj, jd -> kd', Q, triangular_solve(R.T, jnp.eye(R.shape[0]), lower=True), L, alpha_tilde_QR) #(K*T, c) @ (c, c) @ (c, c) @ (c, d) 
     K_u_u_inv = jnp.linalg.solve(K_u_u, jnp.eye(K_u_u.shape[0]))                                                             #K_u_u_inv = jnp.linalg.inv(K_u_u)
     return alpha, K_A_u, K_u_u, H_K_A_u, K_u_u_inv
 
@@ -74,7 +73,7 @@ def single_pair_loss(alpha_H, X, params, kernel_function, K_A_u, K_u_u_inv, id_1
     QQ_product = Q @ Q                                                          #jnp.einsum('ij,jm->im', Q, Q)
 
     if operator == 'minus':
-        return jnp.trace(Q)**2 - jnp.trace(QQ_product)
+        return jnp.trace(Q)**2 - jnp.trace(QQ_product) # last term can be einsum(Q,Q,'nm,mn->')
     
     elif operator == 'plus':
         return jnp.trace(Q)**2 + jnp.trace(QQ_product)
@@ -115,7 +114,9 @@ def optimize(X, A, kernel_function='gaussian', iterations=10000, learning_rate=0
     key = random.PRNGKey(seed)
     
     alpha_tilde = random.normal(key, (c, d))             
-    l_tilde, sigma_f_tilde = random.normal(key, (2,))        
+    #l_tilde, sigma_f_tilde = random.normal(key, (2,))     initialize at 1   
+    l_tilde = jnp.sqrt(0.1)
+    sigma_f_tilde = 0.1
 
     indices = jax.random.choice(key, A.shape[1], shape=(c,), replace=False)
     u = A[:, indices]    
@@ -152,3 +153,4 @@ def optimize(X, A, kernel_function='gaussian', iterations=10000, learning_rate=0
             print(f"Iteration {i}, S: {-loss_}, S_ratio: {S_ratio}")
 
     return params, ls_loss, ls_S_ratio
+
