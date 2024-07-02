@@ -10,20 +10,6 @@ import wandb
 from itertools import combinations
 
                    
-def single_pair_loss(U_tilde, X, id_1, id_2, operator = 'minus'):                           #U (N,d); X(K,N,T)
-
-    Y = jnp.einsum('ji,jk->ik', U_tilde, X[id_1, :, :])                 #(d,T)
-    Y_prime = jnp.einsum('ji,jk->ik', U_tilde, X[id_2, :, :])           #(d,T)
-
-    YY = jnp.einsum('ij,kj->ik', Y, Y_prime)                            #(d,d)
-    YY_product = jnp.einsum('ij,jm->im', YY, YY)                        #YY @ YY
-
-    if operator == 'minus':
-        return jnp.trace(YY)**2 - jnp.trace(YY_product)
-    
-    elif operator == 'plus':
-        return jnp.trace(YY)**2 + jnp.trace(YY_product)
-    
 def loss(params, X, key, s_learn, normalized = False):  
     K, N, T = X.shape
 
@@ -45,14 +31,20 @@ def loss(params, X, key, s_learn, normalized = False):
     # indices = random.randint(key, shape=(num_pairs,), minval=0, maxval=all_combinations.shape[0])
     # index_pairs = all_combinations[indices]
 
-    batched_loss = vmap(single_pair_loss, in_axes=(None, None, 0, 0))(U_tilde, X, index_pairs[:, 0], index_pairs[:, 1]) #(num_pairs)
-    
+    Y1 = jnp.einsum('ji,ljk->lik', U_tilde, X[index_pairs[:, 0], :, :])           #(pairs, d,T)
+    Y2 = jnp.einsum('ji,ljk->lik', U_tilde, X[index_pairs[:, 1], :, :])           #(pairs, d,T)
+
+    YY = jnp.einsum('lij,mkj->lmik', Y1, Y2)                                      #(pairs, pairs, d,d)
+
+    term2 = jnp.einsum('klnm,klmn->', YY,YY)
+    term1 = jnp.square(jnp.einsum('klnn->kl', YY)).sum()
+
     if normalized == False:
-        S = (2 / (num_pairs**2) ) * jnp.sum(batched_loss)
+        S = (2 / (num_pairs**2) ) * (term1-term2)
         return -S
-    else: 
-        batched_normalizer = vmap(single_pair_loss, in_axes=(None, None, 0, 0, None))(U_tilde, X, index_pairs[:, 0], index_pairs[:, 1], 'plus')
-        return jnp.sum(batched_loss) / jnp.sum(batched_normalizer)
+    
+    else:
+        return (term1-term2) / (term1+term2)
 
 def update(params, X, optimizer, opt_state, key, s_learn):
     grad_ = grad(loss)(params,X,key, s_learn)
