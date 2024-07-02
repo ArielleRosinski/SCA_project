@@ -12,6 +12,8 @@ import math
 from utils import *
 from kernels import * 
 
+from itertools import combinations
+
 import wandb
 
 def get_params(params, kernel_function):
@@ -85,8 +87,12 @@ def loss(params, X, A, d,kernel_function, key, normalized = False):
 
 
     num_pairs = 100  
-    indices = random.randint(key, shape=(num_pairs*2,), minval=0, maxval=K) 
-    index_pairs = indices.reshape((num_pairs, 2))
+    # indices = random.randint(key, shape=(num_pairs*2,), minval=0, maxval=K) 
+    # index_pairs = indices.reshape((num_pairs, 2))
+    all_combinations = jnp.array(list(combinations(range(K), 2)))
+    indices = random.randint(key, shape=(num_pairs,), minval=0, maxval=all_combinations.shape[0])
+    index_pairs = all_combinations[indices]
+
 
     batched_loss = vmap(single_pair_loss, in_axes=(None, None, None, None, 0, 0))(K_u_u_K_u_A_alpha_H, X, params, kernel_function, index_pairs[:, 0], index_pairs[:, 1]) #(num_pairs)
 
