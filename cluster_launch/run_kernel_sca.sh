@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=10:00:00
 #SBATCH --mail-type=NONE
-#SBATCH --array=1-12
+#SBATCH --array=1-54
 #SBATCH --output=logs_kernel_sca/kernel_sca_%A_%a.out
 #SBATCH -p ampere
 
@@ -33,8 +33,7 @@ path_A=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $c
 save_path=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $5}' $config)
 seed=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $6}' $config)
 mode=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $7}' $config)
-l=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $8}' $config)
-kernel=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $9}' $config)
+kernel=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $8}' $config)
 
-python /rds/user/ar2217/hpc-work/SCA/SCA_project/churchland_kernel_sca.py --d $d --path_X $path_X --path_A $path_A --save_path $save_path --seed $seed --mode $mode --l $l --kernel $kernel
+python /rds/user/ar2217/hpc-work/SCA/SCA_project/run_kernel_sca_inducing_points.py --d $d --path_X $path_X --path_A $path_A --save_path $save_path --seed $seed --mode $mode --kernel $kernel
 

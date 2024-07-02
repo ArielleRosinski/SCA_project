@@ -51,7 +51,7 @@ flags.DEFINE_string('mode', 'disabled',
                      'wanb mode')
 flags.DEFINE_string('kernel', 'gaussian',
                      'type of kernel used')
-flags.DEFINE_float('c', 30, 'number of inducing points')
+flags.DEFINE_integer('c', 30, 'number of inducing points')
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
@@ -87,7 +87,7 @@ params, ls_loss,  ls_S_ratio = optimize(X, A, iterations=iterations, learning_ra
 wandb.finish()
 
 if save == 'True': 
-    np.save(f'{save_path}/alpha_tilde_{d}d_{kernel}', params)
+    np.save(f'{save_path}/params_{d}d_{kernel}', params)
 
     _, u, l2 = get_params(params, kernel_function=kernel_function)
     K_u_u_K_u_A_alpha_H  = get_alpha(params, A, X, kernel_function, d)
