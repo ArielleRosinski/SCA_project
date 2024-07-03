@@ -34,7 +34,7 @@ from jax import grad, random, vmap
 
 
 flags.DEFINE_integer('seed', 42, 'Random seed to set')
-flags.DEFINE_integer('iterations', 10000, 'training iterations')
+flags.DEFINE_integer('iterations', 5000, 'training iterations')
 flags.DEFINE_float('learning_rate', 0.001, 'Initial learning rate.')
 flags.DEFINE_integer('d', 3, 'Subspace dimensionality')
 flags.DEFINE_string('path_X', '/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/X_softNormMax_centerFalse.npy',
@@ -93,7 +93,7 @@ if save == 'True':
     K_u_u_K_u_A_alpha_H  = get_alpha(params, A, X, kernel_function, d)
 
     X_reshaped = X.swapaxes(0,1).reshape(N,-1)
-    K_u_X = K_X_Y_identity(u, X_reshaped, l2=l2).reshape(-1,K,T).swapaxes(0,1)  
+    K_u_X = kernel_function(u, X_reshaped, l2=l2).reshape(-1,K,T).swapaxes(0,1)  
     Y = jnp.einsum('ji,kjm->kim',  K_u_u_K_u_A_alpha_H, K_u_X)
     Y = center(Y)
 
