@@ -34,8 +34,8 @@ from jax import grad, random, vmap
 
 
 flags.DEFINE_integer('seed', 42, 'Random seed to set')
-flags.DEFINE_integer('iterations', 5000, 'training iterations')
-flags.DEFINE_float('learning_rate', 0.001, 'Initial learning rate.')
+flags.DEFINE_integer('iterations', 1000, 'training iterations')
+flags.DEFINE_float('learning_rate', 0.01, 'Initial learning rate.')
 flags.DEFINE_integer('d', 3, 'Subspace dimensionality')
 flags.DEFINE_string('path_X', '/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/X_softNormMax_centerFalse.npy',
                      'dataset path')
