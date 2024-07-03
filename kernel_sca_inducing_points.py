@@ -23,23 +23,25 @@ def center(x, axis=0):
 def get_params(params, kernel_function):
     alpha_tilde = params['alpha_tilde']
     u = params['u']
+    l2 = None
+    scale = None
 
-    if kernel_function == K_X_Y_squared_exponential:
+    if kernel_function == K_X_Y_squared_exponential or kernel_function == K_X_Y_rational_quadratic:
         l_tilde = params['l_tilde']      
-        l2 = l_tilde**2 + 0.01
-    else:
-        l2=None
+        l2 = l_tilde**2 + 0.01  
+        if kernel_function == K_X_Y_rational_quadratic:
+            scale = params['scale']        
 
-    return alpha_tilde, u, l2
+    return alpha_tilde, u, l2, scale
 
 def get_alpha(params, A, X, kernel_function, d):
     K, N, T = X.shape
 
-    alpha_tilde, u, l2 = get_params(params, kernel_function)
+    alpha_tilde, u, l2, scale = get_params(params, kernel_function)
     c = u.shape[-1]
 
-    K_u_u =  kernel_function(u, u, l2=l2)                                    #(c, c)          
-    K_A_u =  kernel_function(A, u, l2=l2)                                    #(K*T, c)
+    K_u_u =  kernel_function(u, u, l2=l2, scale=scale)                                    #(c, c)          
+    K_A_u =  kernel_function(A, u, l2=l2, scale=scale)                                    #(K*T, c)
 
     K_A_u_reshaped = K_A_u.reshape(K,T,c)                                    #(K, T, c)
     mean = jnp.mean(K_A_u_reshaped, axis=(0), keepdims=True)                 #(1, T, c)
@@ -63,7 +65,7 @@ def get_alpha(params, A, X, kernel_function, d):
 def loss(params, X, A, d,kernel_function, key, normalized = False):  
     K, N, T = X.shape
 
-    _, u, l2 = get_params(params, kernel_function)
+    _, u, l2, scale = get_params(params, kernel_function)
 
     K_u_u_K_u_A_alpha_H = get_alpha(params, A, X, kernel_function, d) 
 
@@ -78,8 +80,8 @@ def loss(params, X, A, d,kernel_function, key, normalized = False):
 
     X1 = X[index_pairs[:, 0]].swapaxes(0,1).reshape(N,-1)
     X2 = X[index_pairs[:, 1]].swapaxes(0,1).reshape(N,-1)
-    K_u_X1 = kernel_function(u, X1, l2=l2).reshape(-1,num_pairs,T).swapaxes(0,1)    #(c, pairs*T) --> (pairs, c, T)
-    K_u_X2 = kernel_function(u, X2, l2=l2).reshape(-1,num_pairs,T).swapaxes(0,1)  
+    K_u_X1 = kernel_function(u, X1, l2=l2, scale=scale).reshape(-1,num_pairs,T).swapaxes(0,1)    #(c, pairs*T) --> (pairs, c, T)
+    K_u_X2 = kernel_function(u, X2, l2=l2, scale=scale).reshape(-1,num_pairs,T).swapaxes(0,1)  
 
     k1 = jnp.einsum('lji,jm->lim',  K_u_X1, K_u_u_K_u_A_alpha_H)                    #(pair, T, d)
     k2 = jnp.einsum('lji,jm->lim',  K_u_X2, K_u_u_K_u_A_alpha_H) 
@@ -112,18 +114,21 @@ def optimize(X, A, kernel_function=K_X_Y_squared_exponential, iterations=10000, 
     
     alpha_tilde = random.normal(key, (c, d))             
 
-    l_tilde = 0.1
-
     indices = jax.random.choice(key, A.shape[1], shape=(c,), replace=False)
     u = A[:, indices]    
+
+    l_tilde = 0.1
+    scale = 0.1
 
     params = {
         'alpha_tilde': alpha_tilde,
         'u': u
     }
 
-    if kernel_function == K_X_Y_squared_exponential:
+    if kernel_function == K_X_Y_squared_exponential or kernel_function == K_X_Y_rational_quadratic:
         params['l_tilde'] = l_tilde
+        if kernel_function == K_X_Y_rational_quadratic:
+            params['scale'] = scale
     
     keys = random.split(key, num=iterations)
 
