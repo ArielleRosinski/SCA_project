@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=10:00:00
 #SBATCH --mail-type=NONE
-#SBATCH --array=1-54
+#SBATCH --array=1-36
 #SBATCH --output=logs_kernel_sca/kernel_sca_%A_%a.out
 #SBATCH -p ampere
 
