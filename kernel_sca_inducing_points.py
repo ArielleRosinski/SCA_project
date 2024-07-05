@@ -16,10 +16,6 @@ from itertools import combinations
 
 import wandb
 
-def center(x, axis=0):
-    mean_x = jnp.mean(x, axis=(axis), keepdims=True)        
-    return (x - mean_x)
-
 def get_params(params, kernel_function):
     alpha_tilde = params['alpha_tilde']
     u = params['u']
@@ -35,7 +31,7 @@ def get_params(params, kernel_function):
     return alpha_tilde, u, l2, scale
 
 def get_alpha(params, A, X, kernel_function, d):
-    K, N, T = X.shape
+    _, _, T = X.shape
 
     alpha_tilde, u, l2, scale = get_params(params, kernel_function)
     c = u.shape[-1]
@@ -43,9 +39,9 @@ def get_alpha(params, A, X, kernel_function, d):
     K_u_u =  kernel_function(u, u, l2=l2, scale=scale)                                    #(c, c)          
     K_A_u =  kernel_function(A, u, l2=l2, scale=scale)                                    #(K*T, c)
 
-    K_A_u_reshaped = K_A_u.reshape(K,T,c)                                    #(K, T, c)
+    K_A_u_reshaped = K_A_u.reshape(-1,T,c)                                    #(K, T, c)
     mean = jnp.mean(K_A_u_reshaped, axis=(0), keepdims=True)                 #(1, T, c)
-    H_K_A_u = (K_A_u_reshaped - mean).reshape(K*T,c)                         #(K*T,c)           
+    H_K_A_u = (K_A_u_reshaped - mean).reshape(-1,c)                         #(K*T,c)           
     L = jnp.linalg.cholesky(K_u_u + jnp.identity(c) * 1e-5)
     Q_, R = jnp.linalg.qr(H_K_A_u, mode='reduced')                                                                                       
     
@@ -54,9 +50,9 @@ def get_alpha(params, A, X, kernel_function, d):
     
     alpha_tilde_QR, _ = jnp.linalg.qr(alpha_tilde, mode='reduced') 
     alpha = jnp.einsum('ij,jm->im', Q_, solve_triangular(R.T, jnp.dot(L, alpha_tilde_QR), lower=True))                            #(K*T, c) @ (c, c) @ (c, c) @ (c, d) 
-    alpha_reshaped = alpha.reshape(K,T,d)                                    #(K, T, D)
+    alpha_reshaped = alpha.reshape(-1,T,d)                                    #(K, T, D)
     mean = jnp.mean(alpha_reshaped, axis=(0), keepdims=True)                 #(1, T, D)
-    alpha_H = (alpha_reshaped - mean).reshape(K*T,d)                         #(K*T,D)
+    alpha_H = (alpha_reshaped - mean).reshape(-1,d)                         #(K*T,D)
 
     K_u_u_K_u_A_alpha_H =  jnp.einsum('ij,jm->im',  K_u_u_K_u_A, alpha_H)    #(c, KT) @ (KT, d) --> (c, d)                       
     

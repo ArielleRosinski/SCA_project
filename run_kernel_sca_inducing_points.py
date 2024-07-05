@@ -80,7 +80,8 @@ if kernel == 'gaussian':
     kernel_function = K_X_Y_squared_exponential
 elif kernel == 'linear':
     kernel_function = K_X_Y_identity
-
+elif kernel == 'rational_quadratic':
+    kernel_function = K_X_Y_rational_quadratic
 
 wandb.init(project="SCA-project-kernel", name=name, mode=mode)
 params, ls_loss,  ls_S_ratio = optimize(X, A, iterations=iterations, learning_rate=learning_rate, d=d, c=c, kernel_function=kernel_function, seed=seed )

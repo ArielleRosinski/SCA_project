@@ -44,6 +44,9 @@ def pre_processing(X,
 
         return jnp.array(X), pca_variance_captured
 
+def center(x, axis=0):
+    mean_x = jnp.mean(x, axis=(axis), keepdims=True)        
+    return (x - mean_x)
 
 def var_explained(X, U):
     """ X is K, N, T 
