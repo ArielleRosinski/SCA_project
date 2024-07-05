@@ -56,14 +56,14 @@ def get_alpha(params, A, X, kernel_function, d):
 
     K_u_u_K_u_A_alpha_H =  jnp.einsum('ij,jm->im',  K_u_u_K_u_A, alpha_H)    #(c, KT) @ (KT, d) --> (c, d)                       
     
-    return  K_u_u_K_u_A_alpha_H
+    return  K_u_u_K_u_A_alpha_H, K_A_u, K_u_u
  
 def loss(params, X, A, d,kernel_function, key, normalized = False):  
     K, N, T = X.shape
 
     _, u, l2, scale = get_params(params, kernel_function)
 
-    K_u_u_K_u_A_alpha_H = get_alpha(params, A, X, kernel_function, d) 
+    K_u_u_K_u_A_alpha_H, _, _ = get_alpha(params, A, X, kernel_function, d) 
 
 
     num_pairs = 100  
