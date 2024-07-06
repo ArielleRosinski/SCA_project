@@ -209,6 +209,11 @@ elif traj == 'rotation_isotropic':
     np.save(f'{save_path}/{traj}/X', X)
     X = project_X(X, key2)
     X = add_isotropic_noise(X, key3)
+elif traj == 'expansion1D_isotropic':
+    X = get_expansions(K, T, key1, key2, oneD=True)
+    np.save(f'{save_path}/{traj}/X', X)
+    X = project_X(X, key3)
+    X = add_isotropic_noise(X, key4)
   
 X_train=X[split:]
 X_test=X[:split]
