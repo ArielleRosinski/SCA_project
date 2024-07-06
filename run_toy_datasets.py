@@ -172,30 +172,37 @@ if not os.path.exists(dir_path):
 
 if traj == 'rotation':
     X = get_rotations(K, T, key1)
+    np.save(f'{save_path}/{traj}/X', X)
     X = project_X(X, key2)
     X = add_low_rank_noise(X, key3, key4)
 elif traj == 'infty':
     X = get_infty_traj(K, T, key1)
+    np.save(f'{save_path}/{traj}/X', X)
     X = project_X(X, key2)
     X = add_low_rank_noise(X, key3, key4)
 elif traj == 'expansion':
     X = get_expansions(K, T, key1)
+    np.save(f'{save_path}/{traj}/X', X)
     X = project_X(X, key2)
     X = add_low_rank_noise(X, key3, key4)
 elif traj == 'expansion1D':
     X = get_expansions(K, T, key1, oneD=True)
+    np.save(f'{save_path}/{traj}/X', X)
     X = project_X(X, key2)
     X = add_low_rank_noise(X, key3, key4)
 elif traj == 'vdp_isotropic':
     X = get_oscillator(K, T, type=van_der_pol)
+    np.save(f'{save_path}/{traj}/X', X)
     X = project_X(X, key1)
     X = add_isotropic_noise(X, key2)
 elif traj == 'duffing_isotropic':
     X = get_oscillator(K, T, type=duffing_oscillator)
+    np.save(f'{save_path}/{traj}/X', X)
     X = project_X(X, key1)
     X = add_isotropic_noise(X, key2)
 elif traj == 'rotation_isotropic':
     X = get_rotations(K, T, key1)
+    np.save(f'{save_path}/{traj}/X', X)
     X = project_X(X, key2)
     X = add_isotropic_noise(X, key3)
   
