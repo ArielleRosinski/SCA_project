@@ -181,7 +181,7 @@ def compute_S_all_pairs(X):
 def get_reg(X_train,y_train,X_test, y_test):
     regr = RidgeCV()
     reg = regr.fit(X_train, y_train)   
-    return reg.score(X_test, y_test)   
+    return reg.score(X_test, y_test), reg.predict(X_test)   
 
 def principal_angle(Y, X_pca, d, smaller=True):
     Q_A, _ = qr(Y.swapaxes(1,2).reshape(-1,d), mode='reduced')
