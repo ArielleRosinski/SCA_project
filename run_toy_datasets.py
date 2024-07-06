@@ -17,7 +17,7 @@ from absl import flags
 import sys
 import os
 
-flags.DEFINE_integer('seed', 42, 'Random seed to set')
+flags.DEFINE_integer('seed', 41, 'Random seed to set')
 flags.DEFINE_string('traj', 'rotation',
                      'toy data set to generate')
 flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/toy_data',
@@ -27,6 +27,7 @@ flags.DEFINE_string('kernel', 'gaussian',
 flags.DEFINE_integer('iterations', 5000, 'training iterations')
 flags.DEFINE_float('learning_rate', 1e-3, 'Initial learning rate.')
 flags.DEFINE_string('linear_run', 'True', 'Run linear methods')
+flags.DEFINE_integer('sigma', 4, 'Gaussian smoothing')
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
@@ -38,6 +39,7 @@ kernel = FLAGS.kernel
 iterations = FLAGS.iterations
 learning_rate = FLAGS.learning_rate
 linear_run = FLAGS.linear_run
+sigma = FLAGS.sigma
 
 def get_rotation_params(K, T, key):
     time = jnp.linspace(0, 2 *jnp.pi, T)[:, jnp.newaxis] #4
@@ -64,11 +66,13 @@ def get_infty_traj(K, T, key):
     X = jnp.stack([x.T, y.T], axis=1)
     return X
 
-def get_expansions(K, T, key, oneD=False):
+def get_expansions(K, T, key1, key2, oneD=False):
     if oneD == False:
-        initial_rates = 0.05 * (random.uniform(key, shape=(K, 2, 1)) - 0.5)
+        initial_rates = 0.05 * (random.uniform(key1, shape=(K, 2, 1)) - 0.25)
+        initial_rates = random.permutation(key2, initial_rates)
     else:
-        initial_rates = 0.1 * (random.uniform(key, shape=(K, 1, 1)) - 0.5)
+        initial_rates = 0.1 * (random.uniform(key1, shape=(K, 1, 1)) - 0.5)
+        initial_rates = random.permutation(key2, initial_rates)
     time_steps = jnp.arange(T)
     X = jnp.exp(initial_rates * time_steps)
     return X
@@ -97,7 +101,7 @@ def van_der_pol(t, y):
     dx2_dt = (1 - x1**2) * x2 - x1 
     return [dx1_dt, dx2_dt]
 
-def get_oscillator(K, T, seed = 42, type=van_der_pol):
+def get_oscillator(K, T, seed = seed, type=van_der_pol):
     np.random.seed(seed) 
     initial_conditions_list = np.random.uniform(low=-np.pi, high=np.pi, size=(K, 2))
 
@@ -114,7 +118,7 @@ def get_oscillator(K, T, seed = 42, type=van_der_pol):
     X = jnp.array(X)
     return X
 
-def project_X(X, key, proj_dims = 100):
+def project_X(X, key, proj_dims = 50):
     proj_matrix = random.normal(key, (proj_dims, X.shape[1]))
     proj_matrix , _ = jnp.linalg.qr(proj_matrix)                    #(N',N)
     X = jnp.einsum('lj,ijk->ilk', proj_matrix, X)                   #(K, N', T)
@@ -150,7 +154,7 @@ def apply_gaussian_smoothing(data, sigma=1, axes=-1):
 
 
 key = random.PRNGKey(seed)
-key1, key2, key3, key4 = random.split(key, 4)
+key1, key2, key3, key4, key5 = random.split(key, 5)
 
 K = 100
 T = 50
@@ -181,22 +185,22 @@ elif traj == 'infty':
     X = project_X(X, key2)
     X = add_low_rank_noise(X, key3, key4)
 elif traj == 'expansion':
-    X = get_expansions(K, T, key1)
+    X = get_expansions(K, T, key1, key2)
     np.save(f'{save_path}/{traj}/X', X)
-    X = project_X(X, key2)
-    X = add_low_rank_noise(X, key3, key4)
+    X = project_X(X, key3)
+    X = add_low_rank_noise(X, key4, key5)
 elif traj == 'expansion1D':
-    X = get_expansions(K, T, key1, oneD=True)
+    X = get_expansions(K, T, key1, key2, oneD=True)
     np.save(f'{save_path}/{traj}/X', X)
-    X = project_X(X, key2)
-    X = add_low_rank_noise(X, key3, key4)
+    X = project_X(X, key3)
+    X = add_low_rank_noise(X, key4, key5)
 elif traj == 'vdp_isotropic':
-    X = get_oscillator(K, T, type=van_der_pol)
+    X = get_oscillator(K, T, type=van_der_pol, seed = seed)
     np.save(f'{save_path}/{traj}/X', X)
     X = project_X(X, key1)
     X = add_isotropic_noise(X, key2)
 elif traj == 'duffing_isotropic':
-    X = get_oscillator(K, T, type=duffing_oscillator)
+    X = get_oscillator(K, T, type=duffing_oscillator, seed = seed)
     np.save(f'{save_path}/{traj}/X', X)
     X = project_X(X, key1)
     X = add_isotropic_noise(X, key2)
@@ -242,7 +246,7 @@ plot_2D(Y)
 plt.title(f'kSCA; s = {compute_S_all_pairs(Y)}')
 plt.savefig(f'{save_path}/{traj}/{kernel}/projection_fig.png')
 
-Y_smoothed = apply_gaussian_smoothing(Y, sigma=3)
+Y_smoothed = apply_gaussian_smoothing(Y, sigma=sigma)
 plt.figure()
 plot_2D(Y_smoothed)
 plt.savefig(f'{save_path}/{traj}/{kernel}/projection_smoothed_fig.png')
@@ -281,7 +285,7 @@ if linear_run == 'True':
     plt.title(f'SCA; s = {compute_S_all_pairs(Y)}')
     plt.savefig(f'{save_path}/{traj}/linear/projection_fig.png')
 
-    Y_smoothed = apply_gaussian_smoothing(Y, sigma=2)
+    Y_smoothed = apply_gaussian_smoothing(Y, sigma=sigma)
     plt.figure()
     plot_2D(Y_smoothed)
     plt.savefig(f'{save_path}/{traj}/linear/projection_smoothed_fig.png')
@@ -308,7 +312,7 @@ if linear_run == 'True':
     plt.title(f'PCA; s = {compute_S_all_pairs(jnp.array(Y_pca))}')
     plt.savefig(f'{save_path}/{traj}/pca/projection_fig.png')
 
-    Y_smoothed = apply_gaussian_smoothing(Y_pca, sigma=2)
+    Y_smoothed = apply_gaussian_smoothing(Y_pca, sigma=sigma)
     plt.figure()
     plot_2D(Y_smoothed)
     plt.savefig(f'{save_path}/{traj}/pca/projection_smoothed_fig.png')
