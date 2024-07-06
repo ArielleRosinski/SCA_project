@@ -33,23 +33,26 @@ def mse_loss(params, X, Y):
     preds = batched_predict(params, X)
     return jnp.mean((preds - Y) ** 2)
 
-def update(params, X, Y, optimizer, opt_state,):
+def update(params, X, Y, optimizer, opt_state):
     grads = grad(mse_loss)(params, X, Y)
     updates, new_opt_state = optimizer.update(grads, opt_state, params)
     new_params = optax.apply_updates(params, updates)
     return new_params, new_opt_state
 
 
-def forward(X, Y, layer_sizes = [10, 10, 5, 2], num_epochs = 1000, seed=42, learning_rate = 1e-3):
+def optimize(X, Y, layer_sizes = [10, 10, 5, 2], num_iterations = 1000, seed=42, learning_rate = 1e-3):
     key = random.PRNGKey(seed)
-    keys = random.split(key, num=num_epochs)
     params = init_network_params(layer_sizes, key)
 
     optimizer = optax.adam(learning_rate)
     opt_state = optimizer.init(params)
 
-    for epoch in range(num_epochs):
-        params, opt_state = update(params, X, Y, opt_state)
-        if epoch % 10 == 0:  
-            current_loss = mse_loss(params, X, Y)  
-            print(f"Epoch {epoch+1}, Loss: {current_loss:.4f}")
+    ls_loss = [] 
+
+    for i in range(num_iterations):
+        params, opt_state = update(params, X, Y, optimizer, opt_state)
+        loss_ = mse_loss(params, X, Y)  
+        ls_loss.append(loss_)
+        if i % 10 == 0:  
+            print(f"Iter {i+1}, Loss: {loss_:.4f}")
+    return params, ls_loss

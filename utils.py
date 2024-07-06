@@ -55,6 +55,17 @@ def var_explained(X, U):
     sigma = np.cov(X_reshaped.T)
     return np.trace(U.T @ sigma @ U) / np.trace(sigma)
 
+def plot_1D(X):
+    K, _, T = X.shape
+    cmap = plt.cm.viridis  
+    fig, ax = plt.subplots() 
+
+    for k in range(K):
+        for t in range(T - 1):
+            ax.plot([t, t + 1], [X[k, 0, t], X[k, 0, t + 1]], color=cmap(t / (T - 1)))
+
+    ax.spines[['top','right']].set_visible(False)
+
 def plot_2D(Y):
     fig = plt.figure(figsize=(5, 5))
     ax = fig.add_subplot(111)
