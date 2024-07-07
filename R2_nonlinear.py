@@ -56,17 +56,11 @@ iterations = FLAGS.iterations
 split = FLAGS.split
 lag = FLAGS.lag
 
-if not os.path.exists(save_path):
-    os.makedirs(save_path)
 
-if not os.path.exists(save_path):
-    try:
-        os.makedirs(save_path)
-    except FileExistsError:
-        time.sleep(0.5)
-        if not os.path.exists(save_path):
-            os.makedirs(save_path)
-
+# try:
+#     os.makedirs(save_path)
+# except FileExistsError:
+#     print("Directory already exists")
 
 behaviour = np.load(path_Y)
 y_train = behaviour[split:,:,lag:].swapaxes(1,2).reshape(-1, behaviour.shape[1])
