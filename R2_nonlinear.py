@@ -33,9 +33,9 @@ from NN_jax import *
 
 flags.DEFINE_string('path_X', '',
                      'kSCA/SCA/PCA-projected data')
-flags.DEFINE_string('path_Y', '/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/hand_vel.npy',
+flags.DEFINE_string('path_Y', '/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy',
                      'behaviour')
-flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/motor_cortex/R2_nonlinear/hand_vel',
+flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/motor_cortex/R2_nonlinear/torques',
                      'save path')
 flags.DEFINE_string('name', '',
                      'file name')
