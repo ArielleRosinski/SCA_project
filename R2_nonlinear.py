@@ -18,6 +18,7 @@ from absl import flags
 import sys
 
 import os
+import time
 
 import jax
 import jax.numpy as jnp
@@ -57,6 +58,15 @@ lag = FLAGS.lag
 
 if not os.path.exists(save_path):
     os.makedirs(save_path)
+
+if not os.path.exists(save_path):
+    try:
+        os.makedirs(save_path)
+    except FileExistsError:
+        time.sleep(0.5)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+
 
 behaviour = np.load(path_Y)
 y_train = behaviour[split:,:,lag:].swapaxes(1,2).reshape(-1, behaviour.shape[1])
