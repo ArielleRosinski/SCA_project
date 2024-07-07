@@ -70,7 +70,7 @@ X = np.load(path_X)
 X_train = X[split:,:,:-lag].swapaxes(1,2).reshape(-1, X.shape[1])
 X_test = X[:split,:,:-lag].swapaxes(1,2).reshape(-1, X.shape[1])
 
-params, ls_loss = optimize(X_train, y_train, layer_sizes = [d, 10, 2], num_iterations = iterations, seed=42, learning_rate = 1e-1)
+params, ls_loss = optimize(X_train, y_train, layer_sizes = [d, 10, 2], num_iterations = iterations, seed=42, learning_rate = 1e-2)
 
 predictions = predict(params, X_test)
 r2 = r2_score(y_test, predictions)
