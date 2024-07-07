@@ -33,16 +33,16 @@ from NN_jax import *
 
 flags.DEFINE_string('path_X', '',
                      'kSCA/SCA/PCA-projected data')
-flags.DEFINE_string('path_Y', '/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/hand_vel.npy',
+flags.DEFINE_string('path_Y', '/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/aug_behaviour.npy',
                      'behaviour')
-flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/motor_cortex/R2_nonlinear/hand_vel',
+flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/motor_cortex/R2_nonlinear/aug_behaviour',
                      'save path')
 flags.DEFINE_string('name', '',
                      'file name')
 flags.DEFINE_integer('d', 3, 'subspace dimensionality')
 flags.DEFINE_integer('split', 10, 'test/train split')
 flags.DEFINE_integer('lag', 5, 'behaviour/neural prediction time lag')
-flags.DEFINE_integer('iterations', 10000, 'training iterations')
+flags.DEFINE_integer('iterations', 15000, 'training iterations')
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
