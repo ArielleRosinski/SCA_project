@@ -1,9 +1,9 @@
 ArrayTaskID   traj                       kernel       linear_run    
 1             expansion1D_isotropic      gaussian     True
-2             expansion1D_isotropic      RQ           False
-
-
-
+2             duffing_isotropic          RQ           False
+3             rotation_isotropic         RQ           False
+4             vdp_isotropic              RQ           False
+5             infty                      RQ           False
 
 
 

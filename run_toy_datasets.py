@@ -24,7 +24,7 @@ flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/toy_data
                      'save path')
 flags.DEFINE_string('kernel', 'gaussian',
                      'type of kernel used')
-flags.DEFINE_integer('iterations', 2500, 'training iterations')
+flags.DEFINE_integer('iterations', 10000, 'training iterations')
 flags.DEFINE_float('learning_rate', 1e-3, 'Initial learning rate.')
 flags.DEFINE_string('linear_run', 'True', 'Run linear methods')
 flags.DEFINE_integer('sigma', 4, 'Gaussian smoothing')
@@ -148,9 +148,7 @@ def add_low_rank_noise(X, key1, key2, proj_dims = 3, sigma = 0.75 ):
     X += noise                                                   
     return X
 
-def apply_gaussian_smoothing(data, sigma=1, axes=-1):
-    smoothed_data = gaussian_filter(np.array(data), sigma=sigma, axes=axes)
-    return jnp.array(smoothed_data)
+
 
 
 key = random.PRNGKey(seed)

@@ -11,6 +11,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import wandb
 from itertools import combinations
 from scipy.integrate import solve_ivp
+from scipy.ndimage import gaussian_filter
 
 def pre_processing(X,
                soft_normalize = 'churchland',
@@ -223,3 +224,7 @@ def get_loss_fig(ls_loss, ls_S_ratio):
     plt.gca().spines[['top','right']].set_visible(False)
     plt.grid()
     plt.subplots_adjust(hspace=0.5)
+
+def apply_gaussian_smoothing(data, sigma=1, axes=-1):
+    smoothed_data = gaussian_filter(np.array(data), sigma=sigma, axes=axes)
+    return jnp.array(smoothed_data)
