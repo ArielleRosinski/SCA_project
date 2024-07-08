@@ -61,6 +61,10 @@ behaviour = FLAGS.behaviour
 
 path_Y = f'/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/{behaviour}.npy'
 save_path = f'/rds/user/ar2217/hpc-work/SCA/outputs/motor_cortex/R2_nonlinear/{behaviour}'
+
+t = 6 if behaviour == 'aug_behaviour' else 2
+
+
 # try:
 #     os.makedirs(save_path)
 # except FileExistsError:
@@ -74,7 +78,7 @@ X = np.load(path_X)
 X_train = X[split:,:,:-lag].swapaxes(1,2).reshape(-1, X.shape[1])
 X_test = X[:split,:,:-lag].swapaxes(1,2).reshape(-1, X.shape[1])
 
-params, ls_loss = optimize(X_train, y_train, layer_sizes = [d, 10, 2], num_iterations = iterations, seed=42, learning_rate = 1e-2)
+params, ls_loss = optimize(X_train, y_train, layer_sizes = [d, 10, t], num_iterations = iterations, seed=42, learning_rate = 1e-2)
 
 predictions = predict(params, X_test)
 r2 = r2_score(y_test, predictions)
