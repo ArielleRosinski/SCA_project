@@ -30,6 +30,7 @@ config=/rds/user/ar2217/hpc-work/SCA/SCA_project/cluster_launch/R2_nonlinear_par
 d=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' $config)
 path_X=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $config)
 name=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $config)
+behaviour=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $5}' $config)
 
-python /rds/user/ar2217/hpc-work/SCA/SCA_project/R2_nonlinear.py --d $d --path_X $path_X --name $name
+python /rds/user/ar2217/hpc-work/SCA/SCA_project/R2_nonlinear.py --d $d --path_X $path_X --name $name --behaviour $behaviour
 

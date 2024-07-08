@@ -33,10 +33,12 @@ from NN_jax import *
 
 flags.DEFINE_string('path_X', '',
                      'kSCA/SCA/PCA-projected data')
-flags.DEFINE_string('path_Y', '/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/aug_behaviour.npy',
-                     'behaviour')
-flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/motor_cortex/R2_nonlinear/aug_behaviour',
-                     'save path')
+# flags.DEFINE_string('path_Y', '/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/aug_behaviour.npy',
+#                      'behaviour')
+# flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/motor_cortex/R2_nonlinear/aug_behaviour',
+#                      'save path')
+flags.DEFINE_string('behaviour', 'hand_vel',
+                     'behaviour type incl. hand_vel, augmented behaviour, torques')
 flags.DEFINE_string('name', '',
                      'file name')
 flags.DEFINE_integer('d', 3, 'subspace dimensionality')
@@ -48,15 +50,17 @@ FLAGS = flags.FLAGS
 FLAGS(sys.argv)
 
 path_X = FLAGS.path_X
-path_Y = FLAGS.path_Y
+#path_Y = FLAGS.path_Y
 save_path = FLAGS.save_path
 name = FLAGS.name
 d = FLAGS.d
 iterations = FLAGS.iterations
 split = FLAGS.split
 lag = FLAGS.lag
+behaviour = FLAGS.behaviour
 
-
+path_Y = f'/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/{behaviour}.npy'
+save_path = f'/rds/user/ar2217/hpc-work/SCA/outputs/motor_cortex/R2_nonlinear/{behaviour}'
 # try:
 #     os.makedirs(save_path)
 # except FileExistsError:
@@ -70,7 +74,7 @@ X = np.load(path_X)
 X_train = X[split:,:,:-lag].swapaxes(1,2).reshape(-1, X.shape[1])
 X_test = X[:split,:,:-lag].swapaxes(1,2).reshape(-1, X.shape[1])
 
-params, ls_loss = optimize(X_train, y_train, layer_sizes = [d, 10, 6], num_iterations = iterations, seed=42, learning_rate = 1e-2)
+params, ls_loss = optimize(X_train, y_train, layer_sizes = [d, 10, 2], num_iterations = iterations, seed=42, learning_rate = 1e-2)
 
 predictions = predict(params, X_test)
 r2 = r2_score(y_test, predictions)
