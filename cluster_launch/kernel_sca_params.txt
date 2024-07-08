@@ -1,19 +1,19 @@
 ArrayTaskID   d     path_X                                                                                  path_A                                                                          save_path                                                          seed    mode        kernel      
-1             4     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    linear
-2             4     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    gaussian
-3             5     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    linear
-4             5     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    gaussian
-5             7     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    linear
-6             7     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    gaussian
-7             8     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    linear
-8             8     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    gaussian
-9             9     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    linear
-10            9     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    gaussian
-11            10    /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    linear
-12            10    /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    gaussian      
-13            2     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    linear
-14            2     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    gaussian
-15            3     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    linear
-16            3     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    gaussian
-17            6     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    linear
-18            6     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    gaussian                        
+1             2     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    linear
+2             2     /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/torques.npy               /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/A_torques.npy     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/kernel/torques       41      disabled    gaussian
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+               
