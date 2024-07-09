@@ -51,7 +51,7 @@ FLAGS(sys.argv)
 
 path_X = FLAGS.path_X
 #path_Y = FLAGS.path_Y
-save_path = FLAGS.save_path
+#save_path = FLAGS.save_path
 name = FLAGS.name
 d = FLAGS.d
 iterations = FLAGS.iterations
