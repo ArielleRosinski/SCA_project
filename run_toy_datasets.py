@@ -28,7 +28,7 @@ flags.DEFINE_integer('iterations', 10000, 'training iterations')
 flags.DEFINE_float('learning_rate', 1e-3, 'Initial learning rate.')
 flags.DEFINE_string('linear_run', 'True', 'Run linear methods')
 flags.DEFINE_integer('sigma', 4, 'Gaussian smoothing')
-flags.DEFINE_integer('sigma_low_rank', 4, 'Low rank noise')
+flags.DEFINE_float('sigma_low_rank', 0.75, 'Low rank noise parameter')
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
