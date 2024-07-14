@@ -1,17 +1,16 @@
-ArrayTaskID   traj                       kernel       linear_run    
-1             expansion1D_isotropic      gaussian     True
-2             duffing_isotropic          RQ           False
-3             rotation_isotropic         RQ           False
-4             vdp_isotropic              RQ           False
-5             infty                      RQ           False
-
-
-
-
-
-
-
-
+ArrayTaskID   traj       kernel       linear_run    sigma_low_rank
+1             infty      gaussian     True          0.2
+2             infty      RQ           False         0.2
+3             infty      gaussian     True          0.3
+4             infty      RQ           False         0.3
+5             infty      gaussian     True          0.4
+6             infty      RQ           False         0.4
+7             infty      gaussian     True          0.5
+8             infty      RQ           False         0.5
+9             infty      gaussian     True          0.6
+10            infty      RQ           False         0.6
+11            infty      gaussian     True          0.1
+12            infty      RQ           False         0.1
 
 
 
