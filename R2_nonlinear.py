@@ -42,7 +42,7 @@ flags.DEFINE_string('behaviour', 'hand_vel',
 flags.DEFINE_string('name', '',
                      'file name')
 flags.DEFINE_integer('d', 3, 'subspace dimensionality')
-flags.DEFINE_integer('split', 10, 'test/train split')
+flags.DEFINE_integer('split', 20, 'test/train split')
 flags.DEFINE_integer('lag', 5, 'behaviour/neural prediction time lag')
 flags.DEFINE_integer('iterations', 20000, 'training iterations')
 
