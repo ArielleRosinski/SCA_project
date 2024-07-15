@@ -1,6 +1,6 @@
 ArrayTaskID  d     path_X                                                                                 name      behaviour
-1           10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth/projection_10d_linear.npy     linear    torques
-2           10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth/projection_10d_linear.npy     linear    aug_behaviour
+1            10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth/projection_10d_linear.npy    linear    torques
+2            10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth/projection_10d_linear.npy    linear    aug_behaviour
 
 
 
