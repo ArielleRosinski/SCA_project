@@ -24,11 +24,13 @@ flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/toy_data
                      'save path')
 flags.DEFINE_string('kernel', 'gaussian',
                      'type of kernel used')
-flags.DEFINE_integer('iterations', 10000, 'training iterations')
+flags.DEFINE_integer('iterations', 5000, 'training iterations')
 flags.DEFINE_float('learning_rate', 1e-3, 'Initial learning rate.')
 flags.DEFINE_string('linear_run', 'True', 'Run linear methods')
 flags.DEFINE_integer('sigma', 4, 'Gaussian smoothing')
 flags.DEFINE_float('sigma_low_rank', 0.75, 'Low rank noise parameter')
+flags.DEFINE_float('dropout_rate', 0.1, 'dropout rate for particle')
+flags.DEFINE_float('kappa', 0.1, 'kappa for particle, Von Mises tuning curves')
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
@@ -42,6 +44,8 @@ learning_rate = FLAGS.learning_rate
 linear_run = FLAGS.linear_run
 sigma = FLAGS.sigma
 sigma_low_rank = FLAGS.sigma_low_rank
+dropout_rate = FLAGS.dropout_rate
+kappa = FLAGS.kappa
 
 def get_rotation_params(K, T, key):
     time = jnp.linspace(0, 2 *jnp.pi, T)[:, jnp.newaxis] #4
@@ -120,6 +124,20 @@ def get_oscillator(K, T, seed = seed, type=van_der_pol):
     X = jnp.array(X)
     return X
 
+def f_(x, kappa):
+    return jnp.exp( (jnp.cos(x)-1) / kappa )            #Von Mises tuning curve 
+
+def get_particle(K, N, T,key1, key2, dropout_rate = 0.1, kappa = 1):
+    phi = 2*jnp.pi * random.uniform(key1, (K,))[:, jnp.newaxis, jnp.newaxis] 
+    thetas = jnp.linspace(0, 2 *jnp.pi, N)[jnp.newaxis, jnp.newaxis, :] 
+    time = jnp.linspace(0, 2*jnp.pi, T)[jnp.newaxis, :, jnp.newaxis] 
+
+    X = f_(thetas-time+phi, kappa = kappa).swapaxes(1,2)
+
+    mask = random.bernoulli(key2, 1.0 - dropout_rate, (K, N, T))
+    X *= mask
+    return X
+
 def project_X(X, key, proj_dims = 50):
     proj_matrix = random.normal(key, (proj_dims, X.shape[1]))
     proj_matrix , _ = jnp.linalg.qr(proj_matrix)                    #(N',N)
@@ -158,6 +176,7 @@ key1, key2, key3, key4, key5 = random.split(key, 5)
 
 K = 100
 T = 50
+N=50
 split = 20
 d = 2 
 c = 30
@@ -214,7 +233,11 @@ elif traj == 'expansion1D_isotropic':
     np.save(f'{save_path}/{traj}/X', X)
     X = project_X(X, key3)
     X = add_isotropic_noise(X, key4)
-  
+elif traj == 'particle':
+    X = get_particle(K, N, T, key1, key2, dropout_rate=dropout_rate,  kappa = kappa)  
+    np.save(f'{save_path}/{traj}/X', X)
+
+
 X_train=X[split:]
 X_test=X[:split]
 K, N, T = X_train.shape

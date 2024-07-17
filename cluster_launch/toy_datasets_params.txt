@@ -1,16 +1,17 @@
-ArrayTaskID   traj       kernel       linear_run    sigma_low_rank
-1             infty      gaussian     True          0.2
-2             infty      RQ           False         0.2
-3             infty      gaussian     True          0.3
-4             infty      RQ           False         0.3
-5             infty      gaussian     True          0.4
-6             infty      RQ           False         0.4
-7             infty      gaussian     True          0.5
-8             infty      RQ           False         0.5
-9             infty      gaussian     True          0.6
-10            infty      RQ           False         0.6
-11            infty      gaussian     True          0.1
-12            infty      RQ           False         0.1
+ArrayTaskID   traj       kernel       linear_run    dropout_rate kappa
+1             particle   gaussian     True          0.1          1e-1
+2             particle   RQ           False         0.1          1e-1
+3             particle   gaussian     True          0.2          1e-1
+4             particle   RQ           False         0.2          1e-1
+5             particle   gaussian     True          0.3          1e-1
+6             particle   RQ           False         0.3          1e-1
+7             particle   gaussian     True          0.1          1e-2
+8             particle   RQ           False         0.1          1e-2
+9             particle   gaussian     True          0.2          1e-2
+10            particle   RQ           False         0.2          1e-2
+11            particle   gaussian     True          0.3          1e-2
+12            particle   RQ           False         0.3          1e-2
+
 
 
 
