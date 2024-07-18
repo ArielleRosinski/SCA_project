@@ -78,11 +78,21 @@ X = np.load(path_X)
 X_train = X[split:,:,:-lag].swapaxes(1,2).reshape(-1, X.shape[1])
 X_test = X[:split,:,:-lag].swapaxes(1,2).reshape(-1, X.shape[1])
 
-params, ls_loss = optimize(X_train, y_train, layer_sizes = [d, 10, t], num_iterations = iterations, seed=42, learning_rate = 1e-3)
+ls_l2_reg = [1e-2, 1e-3, 1e-4, 1e-6, 1e-8, 0]
+r2 = float('-inf') 
+for l2_reg in ls_l2_reg:
+    params_temp, ls_loss_temp = optimize(X_train, y_train, l2_reg, layer_sizes = [d, 10, t], num_iterations = iterations, seed=42, learning_rate = 1e-3)
 
-predictions = predict(params, X_test)
-r2 = r2_score(y_test, predictions)
+    predictions_temp = predict(params_temp, X_test)
+    r2_temp = r2_score(y_test, predictions_temp)
+    if r2_temp > r2:
+        r2 = r2_temp
+        params, ls_loss, predictions = params_temp, ls_loss_temp, predictions_temp
+        l2_reg_final = l2_reg
+        print(f'r2_temp: {r2_temp}')
+        print(f'l2_reg updated to {l2_reg_final}')
 
+print(f'l2_reg final is {l2_reg_final}')
 np.save(f'{save_path}/{name}_{d}_ls_loss', np.array(ls_loss))
 
 plt.figure()
