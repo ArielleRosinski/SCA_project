@@ -282,7 +282,7 @@ plt.savefig(f'{save_path}/{traj}/{kernel}/projection_smoothed_fig_{dropout_rate}
 np.save(f'{save_path}/{traj}/{kernel}/Y_train_{dropout_rate}_{kappa}', Y)
 
 _, u, l2, scale = get_params(params, kernel_function=kernel_function)
-K_u_u_K_u_A_alpha_H, K_A_u, K_u_u  = get_alpha(params, A, X_test, kernel_function, d)
+K_u_u_K_u_A_alpha_H, K_A_u, K_u_u, _  = get_alpha(params, A, X_test, kernel_function, d)
 K_test, _, _ = X_test.shape
 X_reshaped = X_test.swapaxes(0,1).reshape(N,-1)
 K_u_X = kernel_function(u, X_reshaped, l2=l2, scale=scale).reshape(-1,K_test,T).swapaxes(0,1)  
