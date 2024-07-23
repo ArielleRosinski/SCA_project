@@ -45,6 +45,7 @@ flags.DEFINE_integer('d', 3, 'subspace dimensionality')
 flags.DEFINE_integer('split', 20, 'test/train split')
 flags.DEFINE_integer('lag', 5, 'behaviour/neural prediction time lag')
 flags.DEFINE_integer('iterations', 20000, 'training iterations')
+flags.DEFINE_string('spikes', 'True','whether to use psths (False) or spikes (True)')
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
@@ -58,19 +59,26 @@ iterations = FLAGS.iterations
 split = FLAGS.split
 lag = FLAGS.lag
 behaviour = FLAGS.behaviour
+spikes = FLAGS.spikes
 
-path_Y = f'/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/{behaviour}.npy'
-save_path = f'/rds/user/ar2217/hpc-work/SCA/outputs/motor_cortex/R2_nonlinear/{behaviour}'
+if spikes == 'False':
+    path_Y = f'/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/{behaviour}.npy'
+    behaviour = np.load(path_Y)
+    save_path = f'/rds/user/ar2217/hpc-work/SCA/outputs/motor_cortex/R2_nonlinear/{behaviour}'
+elif spikes == 'True':
+    path_Y = '/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/train_behavior.npy'
+    behaviour = np.load(path_Y).swapaxes(1,2)
+    save_path = f'/rds/user/ar2217/hpc-work/SCA/outputs/motor_cortex/R2_nonlinear/{behaviour}_spikes'
+    split = 200
 
 t = 6 if behaviour == 'aug_behaviour' else 2
-
 
 # try:
 #     os.makedirs(save_path)
 # except FileExistsError:
 #     print("Directory already exists")
 
-behaviour = np.load(path_Y)
+
 y_train = behaviour[split:,:,lag:].swapaxes(1,2).reshape(-1, behaviour.shape[1])
 y_test = behaviour[:split,:,lag:].swapaxes(1,2).reshape(-1, behaviour.shape[1])
 
