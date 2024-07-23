@@ -56,100 +56,23 @@ def var_explained(X, U):
     sigma = np.cov(X_reshaped.T)
     return np.trace(U.T @ sigma @ U) / np.trace(sigma)
 
-def plot_1D(X):
-    K, _, T = X.shape
-    cmap = plt.cm.viridis  
-    fig, ax = plt.subplots() 
+def get_pca(X_train, X_test, test=False):
+    _, N, T = X_train.shape
+    X_pca_train = center(X_train).swapaxes(1,2).reshape(-1, N)
+    X_pca_test = center(X_test).swapaxes(1,2).reshape(-1, N)
 
-    for k in range(K):
-        for t in range(T - 1):
-            ax.plot([t, t + 1], [X[k, 0, t], X[k, 0, t + 1]], color=cmap(t / (T - 1)))
-
-    ax.spines[['top','right']].set_visible(False)
-
-def plot_2D(Y):
-    fig = plt.figure(figsize=(5, 5))
-    ax = fig.add_subplot(111)
-    cmap = plt.get_cmap('viridis')      #RdBu
-
-    num_time_points = Y.shape[-1]
-    indices_to_plot = np.arange(0, Y.shape[0], 1)
-
-    for i in indices_to_plot:
-        x = Y[i, 0, :]  
-        y = Y[i, 1, :]  
-        
-        for t in range(num_time_points - 1):
-            ax.plot(x[t:t+2], y[t:t+2], color=cmap(t / (num_time_points - 1)))
-
-    #ax.set_xlabel('SC 1')
-    #ax.set_ylabel('SC 2')
-    ax.spines[['top','right']].set_visible(False)
-    #ax.set_xticks([])
-    #ax.set_yticks([])
-    #plt.grid()
-
-def plot_3D(Y):
-    fig = plt.figure(figsize=(5, 5))
-    ax = fig.add_subplot(111, projection='3d')
-    cmap = plt.get_cmap('viridis')
-
-    num_time_points = Y.shape[-1]
-    indices_to_plot = np.arange(0,Y.shape[0],1)
-
-    for i in indices_to_plot:
-        x = Y[i, 0, :]  
-        y = Y[i, 1, :] 
-        z = Y[i, 2, :]  
-
-        
-        for t in range(num_time_points - 1):
-            ax.plot(x[t:t+2], y[t:t+2], z[t:t+2], color=cmap(t / (num_time_points - 1)))
-    
-    ax.spines[['top','right']].set_visible(False)
-
-def plot_3D_clean(Y, fontsize=13):
-    fig = plt.figure(figsize=(5, 5))
-    ax = fig.add_subplot(111, projection='3d')
-    cmap = plt.get_cmap('Blues_r')
-
-    num_time_points = Y.shape[-1]
-    indices_to_plot = np.arange(0,Y.shape[0],1)
-
-    for i in indices_to_plot:
-        x = Y[i, 0, :]  
-        y = Y[i, 1, :] 
-        z = Y[i, 2, :]  
-        
-        for t in range(num_time_points - 1):
-            ax.plot(x[t:t+2], y[t:t+2], z[t:t+2], color=cmap(t / (num_time_points - 1)), linewidth = 1)
-            #ax.plot(x[t:t+2], y[t:t+2], color=cmap(t / (num_time_points - 1)), linewidth = 1)
-    
-    ax.spines[['top','right']].set_visible(False)
-    ax.grid(False)  # Turn off the grid
-    # ax.set_xticks([])  # Remove x-axis ticks
-    # ax.set_yticks([])  # Remove y-axis ticks
-    # ax.set_zticks([])  # Remove z-axis ticks
-
-    ax.xaxis.pane.fill = False
-    ax.yaxis.pane.fill = False
-    ax.zaxis.pane.fill = False
-
-    # Removing the color of the panes (set to white to match most backgrounds)
-    ax.xaxis.pane.set_edgecolor('white')
-    ax.yaxis.pane.set_edgecolor('white')
-    ax.zaxis.pane.set_edgecolor('white')
-
-    ax.tick_params(axis='both', labelsize=fontsize)
-
-    # ax.xaxis.line.set_linewidth(0)
-    # ax.yaxis.line.set_linewidth(0)
-    # ax.zaxis.line.set_linewidth(0)
-
+    num_pcs = 2
+    pca = PCA(num_pcs)
+    if test:
+        Y_pca = pca.fit(X_pca_train).transform(X_pca_test)
+    else:
+        Y_pca = pca.fit(X_pca_train).transform(X_pca_train)
+    PCs = pca.components_
+    Y_pca = Y_pca.reshape(-1, T, num_pcs).swapaxes(1,2)
+    return Y_pca, PCs
 
 def single_pair_S(X, id_1, id_2, operator):
     XX = jnp.einsum('ij,kj->ik', X[id_1, :, :], X[id_2, :, :])          #(N,N)
-    #XX_product = jnp.einsum('ij,lm->im', XX, XX)                        #(N,N)
     XX_product = XX @ XX
 
     if operator == 'minus':
@@ -224,6 +147,53 @@ def get_loss_fig(ls_loss, ls_S_ratio):
     plt.gca().spines[['top','right']].set_visible(False)
     plt.grid()
     plt.subplots_adjust(hspace=0.5)
+
+def plot_1D(X):
+    K, _, T = X.shape
+    cmap = plt.cm.viridis  
+    fig, ax = plt.subplots() 
+
+    for k in range(K):
+        for t in range(T - 1):
+            ax.plot([t, t + 1], [X[k, 0, t], X[k, 0, t + 1]], color=cmap(t / (T - 1)))
+
+    ax.spines[['top','right']].set_visible(False)
+
+def plot_2D(Y):
+    fig = plt.figure(figsize=(5, 5))
+    ax = fig.add_subplot(111)
+    cmap = plt.get_cmap('viridis')      #RdBu
+
+    num_time_points = Y.shape[-1]
+    indices_to_plot = np.arange(0, Y.shape[0], 1)
+
+    for i in indices_to_plot:
+        x = Y[i, 0, :]  
+        y = Y[i, 1, :]  
+        
+        for t in range(num_time_points - 1):
+            ax.plot(x[t:t+2], y[t:t+2], color=cmap(t / (num_time_points - 1)))
+
+    ax.spines[['top','right']].set_visible(False)
+
+def plot_3D(Y):
+    fig = plt.figure(figsize=(5, 5))
+    ax = fig.add_subplot(111, projection='3d')
+    cmap = plt.get_cmap('viridis')
+
+    num_time_points = Y.shape[-1]
+    indices_to_plot = np.arange(0,Y.shape[0],1)
+
+    for i in indices_to_plot:
+        x = Y[i, 0, :]  
+        y = Y[i, 1, :] 
+        z = Y[i, 2, :]  
+
+        
+        for t in range(num_time_points - 1):
+            ax.plot(x[t:t+2], y[t:t+2], z[t:t+2], color=cmap(t / (num_time_points - 1)))
+    
+    ax.spines[['top','right']].set_visible(False)
 
 def apply_gaussian_smoothing(data, sigma=1, axes=-1):
     smoothed_data = gaussian_filter(np.array(data), sigma=sigma, axes=axes)
