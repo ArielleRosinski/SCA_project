@@ -176,6 +176,22 @@ def plot_2D(Y):
 
     ax.spines[['top','right']].set_visible(False)
 
+def plot_2D_K_coded(Y):
+    K, _,_=Y.shape
+    fig = plt.figure()
+    ax = fig.add_subplot(111) #projection='3d'
+    cmap = plt.get_cmap('coolwarm', K)
+    for k in range(K):
+        x = Y[k, 0, :]
+        y = Y[k, 1, :]
+        
+        #z = Y[k, 2, :] 
+        #color = cmap(k / K)
+        #ax.plot(x, y, z, linestyle='-', marker='.', linewidth=1, color=color)
+        color = cmap(k / (K - 1)) 
+        ax.plot(x, y, linestyle='-', marker='.', linewidth=1, color=color)
+    plt.title(f'kSCA; s = {compute_S_all_pairs(Y)}')
+    
 def plot_3D(Y):
     fig = plt.figure(figsize=(5, 5))
     ax = fig.add_subplot(111, projection='3d')
