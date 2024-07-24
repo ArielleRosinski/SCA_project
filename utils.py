@@ -73,14 +73,14 @@ def var_explained_kernel(K_u_u, H_K_A_u, alpha_tilde, kernel_function, A, X, l2,
     var_explained = jnp.trace(alpha.T @ K_A_A_tilde @ K_A_A_tilde @ alpha) / jnp.trace(K_A_A_tilde)
     return var_explained
 
-def get_pca(X_train, X_test, test=False):
+def get_pca(X_train, X_test=None, num_pcs = 2, test=False):
     _, N, T = X_train.shape
     X_pca_train = center(X_train).swapaxes(1,2).reshape(-1, N)
-    X_pca_test = center(X_test).swapaxes(1,2).reshape(-1, N)
 
-    num_pcs = 2
+    
     pca = PCA(num_pcs)
     if test:
+        X_pca_test = center(X_test).swapaxes(1,2).reshape(-1, N)
         Y_pca = pca.fit(X_pca_train).transform(X_pca_test)
     else:
         Y_pca = pca.fit(X_pca_train).transform(X_pca_train)
@@ -228,9 +228,10 @@ def plot_3D(Y):
     
     ax.spines[['top','right']].set_visible(False)
 
-def plot_3D_K_coded(Y):
+
+def plot_3D_K_coded(Y, elevation=30, azimuth=30, rotate=False):
     K, _,_=Y.shape
-    fig = plt.figure()
+    fig = plt.figure(figsize=(6,6))
     ax = fig.add_subplot(111, projection='3d') 
     cmap = plt.get_cmap('coolwarm', K)
     for k in range(K):
@@ -241,6 +242,14 @@ def plot_3D_K_coded(Y):
 
         color = cmap(k / (K - 1)) 
         ax.plot(x, y, z, linestyle='-', marker='.', linewidth=1, color=color)
+
+        if rotate:
+            ax.view_init(elev=elevation, azim=azimuth)
+
+    ax.set_xlabel('Dim. 1')
+    ax.set_ylabel('Dim. 2')
+    ax.set_zlabel('Dim. 3')
+    ax.set_box_aspect(aspect=None, zoom=0.85)
     plt.title(f'kSCA; s = {compute_S_all_pairs(Y)}')
     
 def apply_gaussian_smoothing(data, sigma=1, axes=-1):
