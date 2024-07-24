@@ -58,12 +58,13 @@ def var_explained(X, U):
     sigma = np.cov(X_reshaped.T)
     return np.trace(U.T @ sigma @ U) / np.trace(sigma)
 
-def var_explained_kernel(K_u_u, H_K_A_u, alpha_tilde, kernel_function, A, X, l2, scale):
+#def var_explained_kernel(K_u_u, H_K_A_u, alpha_tilde, kernel_function, A, X, l2, scale, c):
+def var_explained_kernel(alpha, kernel_function, A, X, l2, scale):
     K, _, T = X.shape
-    L = jnp.linalg.cholesky(K_u_u + jnp.identity(c) * 1e-5)
-    Q_, R = jnp.linalg.qr(H_K_A_u, mode='reduced')                                                                                       
-    alpha_tilde_QR, _ = jnp.linalg.qr(alpha_tilde, mode='reduced') 
-    alpha = jnp.einsum('ij,jm->im', Q_, solve_triangular(R.T, jnp.dot(L, alpha_tilde_QR), lower=True))   
+    # L = jnp.linalg.cholesky(K_u_u + jnp.identity(c) * 1e-5)
+    # Q_, R = jnp.linalg.qr(H_K_A_u, mode='reduced')                                                                                       
+    # alpha_tilde_QR, _ = jnp.linalg.qr(alpha_tilde, mode='reduced') 
+    #alpha = jnp.einsum('ij,jm->im', Q_, solve_triangular(R.T, jnp.dot(L, alpha_tilde_QR), lower=True))   
 
     K_A_A = kernel_function(A, A, l2=l2, scale=scale)
     K_A_A_reshaped = K_A_A.reshape(K, T, K, T)

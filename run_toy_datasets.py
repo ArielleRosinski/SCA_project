@@ -263,7 +263,8 @@ get_loss_fig(ls_loss, ls_S_ratio)
 plt.savefig(f'{save_path}/{traj}/{kernel}/loss_fig_{dropout_rate}_{kappa}.png')
 
 _, u, l2, scale = get_params(params, kernel_function=kernel_function)
-K_u_u_K_u_A_alpha_H, K_A_u, K_u_u, _  = get_alpha(params, A, X_train, kernel_function, d)
+K_u_u_K_u_A_alpha_H, K_A_u, K_u_u, H_K_A_u, alpha  = get_alpha(params, A, X_train, kernel_function, d)
+
 X_reshaped = X_train.swapaxes(0,1).reshape(N,-1)
 K_u_X = kernel_function(u, X_reshaped, l2=l2, scale=scale).reshape(-1,K,T).swapaxes(0,1)  
 Y = jnp.einsum('ji,kjm->kim',  K_u_u_K_u_A_alpha_H, K_u_X)
@@ -278,6 +279,8 @@ Y_smoothed = apply_gaussian_smoothing(Y, sigma=sigma)
 plt.figure()
 plot_2D(Y_smoothed)
 plt.savefig(f'{save_path}/{traj}/{kernel}/projection_smoothed_fig_{dropout_rate}_{kappa}.png')
+
+#np.save(f'{save_path}/{traj}/{kernel}/var_explained_{dropout_rate}_{kappa}', var_explained_kernel(alpha, kernel_function, A, X_train, l2, scale) )
 
 np.save(f'{save_path}/{traj}/{kernel}/Y_train_{dropout_rate}_{kappa}', Y)
 

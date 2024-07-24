@@ -128,7 +128,7 @@ params, ls_loss, ls_S_ratio = optimize(X, A, iterations=iterations, learning_rat
 wandb.finish()
 
 _, u, l2, scale = get_params(params, kernel_function=kernel_function)
-K_u_u_K_u_A_alpha_H, K_A_u, K_u_u, _  = get_alpha(params, A, X, kernel_function, d)
+K_u_u_K_u_A_alpha_H, K_A_u, K_u_u, _, _  = get_alpha(params, A, X, kernel_function, d)
 
 X_reshaped = X.swapaxes(0,1).reshape(N,-1)
 K_u_X = kernel_function(u, X_reshaped, l2=l2, scale=scale).reshape(-1,K,T).swapaxes(0,1)  
