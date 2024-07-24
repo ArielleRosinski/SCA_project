@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=10:00:00
 #SBATCH --mail-type=NONE
-#SBATCH --array=1-10
+#SBATCH --array=1-5
 #SBATCH --output=logs_DDM/DDM_%A_%a.out
 #SBATCH -p ampere
 
