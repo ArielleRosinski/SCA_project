@@ -3,6 +3,7 @@ from numpy.linalg import qr, svd
 import jax
 import jax.numpy as jnp
 from jax import grad, random, vmap
+from jax.scipy.linalg import solve_triangular
 import optax
 from sklearn.decomposition import PCA
 from sklearn.linear_model import ElasticNetCV, LinearRegression, RidgeCV
@@ -52,9 +53,25 @@ def center(x, axis=0):
 def var_explained(X, U):
     """ X is K, N, T 
         U is N, d """
-    X_reshaped = np.concatenate(X.swapaxes(1,2))    #(K*T, N)                #X_reshaped -= np.mean(X_reshaped, axis = 0) sigma = np.dot(X_reshaped.T, X_reshaped)
+    _, N, _ = X.shape
+    X_reshaped = X.swapaxes(1,2).reshape(-1, N)    #(K*T, N)                #X_reshaped -= np.mean(X_reshaped, axis = 0) sigma = np.dot(X_reshaped.T, X_reshaped)
     sigma = np.cov(X_reshaped.T)
     return np.trace(U.T @ sigma @ U) / np.trace(sigma)
+
+def var_explained_kernel(K_u_u, H_K_A_u, alpha_tilde, kernel_function, A, X, l2, scale):
+    K, _, T = X.shape
+    L = jnp.linalg.cholesky(K_u_u + jnp.identity(c) * 1e-5)
+    Q_, R = jnp.linalg.qr(H_K_A_u, mode='reduced')                                                                                       
+    alpha_tilde_QR, _ = jnp.linalg.qr(alpha_tilde, mode='reduced') 
+    alpha = jnp.einsum('ij,jm->im', Q_, solve_triangular(R.T, jnp.dot(L, alpha_tilde_QR), lower=True))   
+
+    K_A_A = kernel_function(A, A, l2=l2, scale=scale)
+    K_A_A_reshaped = K_A_A.reshape(K, T, K, T)
+    mean = jnp.mean(K_A_A_reshaped, axis=(0,2), keepdims=True)   
+    K_A_A_tilde = (K_A_A_reshaped - mean).reshape(K*T, K*T)       
+
+    var_explained = jnp.trace(alpha.T @ K_A_A_tilde @ K_A_A_tilde @ alpha) / jnp.trace(K_A_A_tilde)
+    return var_explained
 
 def get_pca(X_train, X_test, test=False):
     _, N, T = X_train.shape
@@ -211,6 +228,21 @@ def plot_3D(Y):
     
     ax.spines[['top','right']].set_visible(False)
 
+def plot_3D_K_coded(Y):
+    K, _,_=Y.shape
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d') 
+    cmap = plt.get_cmap('coolwarm', K)
+    for k in range(K):
+        x = Y[k, 0, :]
+        y = Y[k, 1, :]
+        z = Y[k, 2, :] 
+       
+
+        color = cmap(k / (K - 1)) 
+        ax.plot(x, y, z, linestyle='-', marker='.', linewidth=1, color=color)
+    plt.title(f'kSCA; s = {compute_S_all_pairs(Y)}')
+    
 def apply_gaussian_smoothing(data, sigma=1, axes=-1):
     smoothed_data = gaussian_filter(np.array(data), sigma=sigma, axes=axes)
     return jnp.array(smoothed_data)
