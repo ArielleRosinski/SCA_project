@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=10:00:00
 #SBATCH --mail-type=NONE
-#SBATCH --array=1-16
+#SBATCH --array=1-6
 #SBATCH --output=logs_toy_datasets/toy_datasets_%A_%a.out
 #SBATCH -p ampere
 
@@ -30,8 +30,9 @@ config=/rds/user/ar2217/hpc-work/SCA/SCA_project/cluster_launch/toy_datasets_par
 traj=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' $config)
 kernel=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $config)
 linear_run=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $config)
-dropout_rate=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $5}' $config)
-kappa=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $6}' $config)
+sigma_low_rank=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $5}' $config)
+l2=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $6}' $config)
+iterations=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $6}' $config)
 
-python /rds/user/ar2217/hpc-work/SCA/SCA_project/run_toy_datasets.py --traj $traj --kernel $kernel --linear_run $linear_run --dropout_rate $dropout_rate --kappa $kappa
+python /rds/user/ar2217/hpc-work/SCA/SCA_project/run_toy_datasets.py --traj $traj --kernel $kernel --linear_run $linear_run --sigma_low_rank $sigma_low_rank --l2 $l2 --iterations $iterations
 
