@@ -5,9 +5,9 @@ ArrayTaskID   d          sigma_noise     l2        proj_dims
 4             3          1               1e-2      50 
 5             3          5               1e-2      50 
 6             3          10              1e-2      50 
-
-
-
+7             3          1               0.005     50 
+8             3          5               0.005     50 
+9             3          10              0.005     50 
 
 
 
