@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=10:00:00
 #SBATCH --mail-type=NONE
-#SBATCH --array=1-6
+#SBATCH --array=1-4
 #SBATCH --output=logs_toy_datasets/toy_datasets_%A_%a.out
 #SBATCH -p ampere
 
