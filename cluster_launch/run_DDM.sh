@@ -29,7 +29,8 @@ config=/rds/user/ar2217/hpc-work/SCA/SCA_project/cluster_launch/DDM_params.txt
 
 d=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' $config)
 sigma_noise=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $config)
-proj_dims=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $config)
+l2=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $config)
+proj_dims=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $5}' $config)
 
-python /rds/user/ar2217/hpc-work/SCA/SCA_project/DDM.py --d $d --sigma_noise $sigma_noise --proj_dims $proj_dims
+python /rds/user/ar2217/hpc-work/SCA/SCA_project/DDM.py --d $d --sigma_noise $sigma_noise --l2 $l2 --proj_dims $proj_dims
 
