@@ -24,7 +24,7 @@ from utils import *
 flags.DEFINE_float('sigma', 0.35, 'DDM param')
 flags.DEFINE_integer('d', 3, 'subspace dimensionality')
 flags.DEFINE_integer('c', 40, 'inducing points')
-flags.DEFINE_integer('iterations', 10000, 'iters')
+flags.DEFINE_integer('iterations', 5000, 'iters')
 flags.DEFINE_float('learning_rate', 1e-3, 'Initial learning rate.')
 flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/DDM', 'save path')
 flags.DEFINE_integer('proj_dims', 10, 'proj dims from DDM to neurons')
@@ -87,7 +87,7 @@ paths = paths[:,:, :jnp.max(RTs)]
 
 
 
-def project(paths, proj_dims = 10):
+def project(paths, key, proj_dims = 50):
     proj_matrix = random.normal(key, (proj_dims, 1))
     proj_matrix , _ = jnp.linalg.qr(proj_matrix)                                        #(N',N)
     return jnp.einsum('dn,lknt->lkdt', proj_matrix, paths[:,:,jnp.newaxis,:])           #(trial, K, N=1, T)
@@ -106,13 +106,12 @@ def add_low_rank_noise(X, key1, key2, proj_dims = 3, sigma_noise= 1 ):
     X += noise                                                   
     return X
 
+key = random.PRNGKey(0)
+key1, key2, key3 = random.split(key, 3)
 
-neural_traces = relu(project(paths, proj_dims=proj_dims))
+neural_traces = relu(project(paths, key=key1, proj_dims=proj_dims))
 neural_traces = neural_traces * 10
-
-key = random.PRNGKey(42)
-key, subkey = random.split(key)
-neural_traces = add_low_rank_noise(neural_traces, key, subkey, sigma_noise = sigma_noise)        #(trials, K, N, T)
+neural_traces = add_low_rank_noise(neural_traces, key2, key3, sigma_noise = sigma_noise)        #(trials, K, N, T)
 
 X = jnp.mean( neural_traces, axis=0 )
 K, N, T = X.shape
