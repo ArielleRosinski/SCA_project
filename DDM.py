@@ -29,6 +29,7 @@ flags.DEFINE_float('learning_rate', 1e-3, 'Initial learning rate.')
 flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/DDM', 'save path')
 flags.DEFINE_integer('proj_dims', 10, 'proj dims from DDM to neurons')
 flags.DEFINE_float('sigma_noise', 0.5, 'low rank noise param')
+flags.DEFINE_float('l2', 1e-1, 'l2 param in RBF kernel when generating low rank correlated noise')
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
@@ -41,6 +42,7 @@ learning_rate = FLAGS.learning_rate
 save_path = FLAGS.save_path
 proj_dims = FLAGS.proj_dims
 sigma_noise = FLAGS.sigma_noise
+l2 = FLAGS.l2
 
 def DDM(mu, sigma, dt, total_time, key):
     num_trajectories = len(mu)
@@ -95,12 +97,17 @@ def project(paths, key, proj_dims = 50):
 def relu(x):
     return jnp.maximum(0, x)
 
-def add_low_rank_noise(X, key1, key2, proj_dims = 3, sigma_noise= 1 ):
+def add_low_rank_noise(X, key1, key2, proj_dims = 3, sigma_noise= 1 , l2=0.1):
     trials, K, N, T = X.shape    
     B = random.normal(key1, (N, proj_dims))
     B, _ = jnp.linalg.qr(B)
 
-    epsilon_t = random.normal(key2, (trials, K, T, proj_dims)) * sigma_noise
+    time_points = jnp.linspace(0, 1, T)[None, :]
+    cov_matrix = K_X_Y_squared_exponential(time_points, time_points, l2=l2)
+    L = jnp.linalg.cholesky(cov_matrix + jnp.identity(T) * 1e-5)
+
+    epsilon_t_uncorr = random.normal(key2, (trials, K, T, proj_dims)) * sigma_noise
+    epsilon_t = jnp.einsum("ts,lksd->lktd", L, epsilon_t_uncorr)
     noise = jnp.einsum('lktd,nd->lknt', epsilon_t, B)             
     
     X += noise                                                   
@@ -111,7 +118,7 @@ key1, key2, key3 = random.split(key, 3)
 
 neural_traces = relu(project(paths, key=key1, proj_dims=proj_dims))
 neural_traces = neural_traces * 5
-neural_traces = add_low_rank_noise(neural_traces, key2, key3, sigma_noise = sigma_noise)        #(trials, K, N, T)
+neural_traces = add_low_rank_noise(neural_traces, key2, key3, sigma_noise = sigma_noise, l2=l2)        #(trials, K, N, T)
 
 X = jnp.mean( neural_traces, axis=0 )
 K, N, T = X.shape
