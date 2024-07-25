@@ -110,7 +110,7 @@ key = random.PRNGKey(0)
 key1, key2, key3 = random.split(key, 3)
 
 neural_traces = relu(project(paths, key=key1, proj_dims=proj_dims))
-neural_traces = neural_traces * 10
+neural_traces = neural_traces * 5
 neural_traces = add_low_rank_noise(neural_traces, key2, key3, sigma_noise = sigma_noise)        #(trials, K, N, T)
 
 X = jnp.mean( neural_traces, axis=0 )
