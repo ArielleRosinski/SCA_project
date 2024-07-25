@@ -141,24 +141,24 @@ K_u_X = kernel_function(u, X_reshaped, l2=l2, scale=scale).reshape(-1,K,T).swapa
 Y = jnp.einsum('ji,kjm->kim',  K_u_u_K_u_A_alpha_H, K_u_X)
 Y = center(Y)
 
-np.save(f'{save_path}/kSCA/params_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', params)
-np.save(f'{save_path}/kSCA/Y_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', Y)
+np.save(f'{save_path}/kSCA/params_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', params)
+np.save(f'{save_path}/kSCA/Y_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', Y)
 
 for i in range(Y.shape[0]):
     Y = Y[:,:,:int(jnp.mean(RTs, axis=0).squeeze()[i])]
 
-np.save(f'{save_path}/kSCA/Y_kSCA_cut_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', Y)
+np.save(f'{save_path}/kSCA/Y_kSCA_cut_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', Y)
 
-np.save(f'{save_path}/kSCA/ls_loss_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', np.array(ls_loss))
-np.save(f'{save_path}/kSCA/ls_S_ratio_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', np.array(ls_S_ratio))
+np.save(f'{save_path}/kSCA/ls_loss_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', np.array(ls_loss))
+np.save(f'{save_path}/kSCA/ls_S_ratio_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', np.array(ls_S_ratio))
 
 plt.figure()
 get_loss_fig(ls_loss, ls_S_ratio)
-plt.savefig(f'{save_path}/kSCA/loss_fig_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}.png')
+plt.savefig(f'{save_path}/kSCA/loss_fig_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}.png')
 
 plt.figure()
 plot_3D_K_coded(Y)
-plt.savefig(f'{save_path}/kSCA/projection_fig_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}.png')
+plt.savefig(f'{save_path}/kSCA/projection_fig_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}.png')
 
 ### SCA ###
 from linear_sca import *
@@ -169,36 +169,36 @@ wandb.finish
 U_qr, _ = jnp.linalg.qr(U)        
 Y = jnp.einsum('ji,kjl->kil', U_qr, center(X))
 
-np.save(f'{save_path}/SCA/U_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', U)
-np.save(f'{save_path}/SCA/Y_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', Y)
+np.save(f'{save_path}/SCA/U_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', U)
+np.save(f'{save_path}/SCA/Y_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', Y)
 
 for i in range(Y.shape[0]):
     Y = Y[:,:,:int(jnp.mean(RTs, axis=0).squeeze()[i])]
 
-np.save(f'{save_path}/SCA/Y_SCA_cut_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', Y)
+np.save(f'{save_path}/SCA/Y_SCA_cut_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', Y)
 
-np.save(f'{save_path}/SCA/ls_loss_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', np.array(ls_loss))
-np.save(f'{save_path}/SCA/ls_S_ratio_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', np.array(ls_S_ratio))
+np.save(f'{save_path}/SCA/ls_loss_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', np.array(ls_loss))
+np.save(f'{save_path}/SCA/ls_S_ratio_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', np.array(ls_S_ratio))
 
 plt.figure()
 get_loss_fig(ls_loss, ls_S_ratio)
-plt.savefig(f'{save_path}/SCA/loss_fig_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}.png')
+plt.savefig(f'{save_path}/SCA/loss_fig_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}.png')
     
 plt.figure()
 plot_3D_K_coded(Y)
-plt.savefig(f'{save_path}/SCA/projection_fig_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}.png')
+plt.savefig(f'{save_path}/SCA/projection_fig_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}.png')
 
 ### PCA ###
 Y_pca, PCs = get_pca(center(X), num_pcs=d)
 
-np.save(f'{save_path}/PCA/PCs_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', PCs)
-np.save(f'{save_path}/PCA/Y_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', Y_pca)
+np.save(f'{save_path}/PCA/PCs_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', PCs)
+np.save(f'{save_path}/PCA/Y_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', Y_pca)
 
 for i in range(Y_pca.shape[0]):
     Y_pca = Y_pca[:,:,:int(jnp.mean(RTs, axis=0).squeeze()[i])]
     
-np.save(f'{save_path}/PCA/Y_PCA_cut_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', Y_pca)
+np.save(f'{save_path}/PCA/Y_PCA_cut_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', Y_pca)
 
 plt.figure() 
 plot_3D_K_coded(jnp.array(Y_pca))
-plt.savefig(f'{save_path}/PCA/projection_fig_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}.png')
+plt.savefig(f'{save_path}/PCA/projection_fig_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}.png')
