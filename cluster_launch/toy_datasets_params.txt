@@ -1,4 +1,4 @@
-ArrayTaskID   traj       kernel       linear_run    sigma_low_rank   l2     iterations    
+ArrayTaskID   traj       kernel       linear_run    sigma_low_rank   l2_     iterations    
 1             rotation   gaussian     True          1                1e-1   2000
 2             rotation   RQ           False         1                1e-2   6000
 3             rotation   gaussian     True          0.75             1e-1   2000

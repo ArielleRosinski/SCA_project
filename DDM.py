@@ -29,7 +29,7 @@ flags.DEFINE_float('learning_rate', 1e-3, 'Initial learning rate.')
 flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/DDM', 'save path')
 flags.DEFINE_integer('proj_dims', 10, 'proj dims from DDM to neurons')
 flags.DEFINE_float('sigma_noise', 0.5, 'low rank noise param')
-flags.DEFINE_float('l2', 1e-1, 'l2 param in RBF kernel when generating low rank correlated noise')
+flags.DEFINE_float('l2_', 1e-1, 'l2 param in RBF kernel when generating low rank correlated noise')
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
@@ -42,7 +42,7 @@ learning_rate = FLAGS.learning_rate
 save_path = FLAGS.save_path
 proj_dims = FLAGS.proj_dims
 sigma_noise = FLAGS.sigma_noise
-l2 = FLAGS.l2
+l2_ = FLAGS.l2_
 
 def DDM(mu, sigma, dt, total_time, key):
     num_trajectories = len(mu)
@@ -97,13 +97,13 @@ def project(paths, key, proj_dims = 50):
 def relu(x):
     return jnp.maximum(0, x)
 
-def add_low_rank_noise(X, key1, key2, proj_dims = 3, sigma_noise= 1 , l2=0.1):
+def add_low_rank_noise(X, key1, key2, proj_dims = 3, sigma_noise= 1 , l2_=0.1):
     trials, K, N, T = X.shape    
     B = random.normal(key1, (N, proj_dims))
     B, _ = jnp.linalg.qr(B)
 
     time_points = jnp.linspace(0, 1, T)[None, :]
-    cov_matrix = K_X_Y_squared_exponential(time_points, time_points, l2=l2)
+    cov_matrix = K_X_Y_squared_exponential(time_points, time_points, l2_=l2_)
     L = jnp.linalg.cholesky(cov_matrix + jnp.identity(T) * 1e-5)
 
     epsilon_t_uncorr = random.normal(key2, (trials, K, T, proj_dims)) * sigma_noise
@@ -118,7 +118,7 @@ key1, key2, key3 = random.split(key, 3)
 
 neural_traces = relu(project(paths, key=key1, proj_dims=proj_dims))
 neural_traces = neural_traces * 5
-neural_traces = add_low_rank_noise(neural_traces, key2, key3, sigma_noise = sigma_noise, l2=l2)        #(trials, K, N, T)
+neural_traces = add_low_rank_noise(neural_traces, key2, key3, sigma_noise = sigma_noise, l2_=l2_)        #(trials, K, N, T)
 
 X = jnp.mean( neural_traces, axis=0 )
 K, N, T = X.shape
@@ -141,24 +141,24 @@ K_u_X = kernel_function(u, X_reshaped, l2=l2, scale=scale).reshape(-1,K,T).swapa
 Y = jnp.einsum('ji,kjm->kim',  K_u_u_K_u_A_alpha_H, K_u_X)
 Y = center(Y)
 
-np.save(f'{save_path}/kSCA/params_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', params)
-np.save(f'{save_path}/kSCA/Y_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', Y)
+np.save(f'{save_path}/kSCA/params_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', params)
+np.save(f'{save_path}/kSCA/Y_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y)
 
 for i in range(Y.shape[0]):
     Y = Y[:,:,:int(jnp.mean(RTs, axis=0).squeeze()[i])]
 
-np.save(f'{save_path}/kSCA/Y_kSCA_cut_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', Y)
+np.save(f'{save_path}/kSCA/Y_kSCA_cut_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y)
 
-np.save(f'{save_path}/kSCA/ls_loss_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', np.array(ls_loss))
-np.save(f'{save_path}/kSCA/ls_S_ratio_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', np.array(ls_S_ratio))
+np.save(f'{save_path}/kSCA/ls_loss_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', np.array(ls_loss))
+np.save(f'{save_path}/kSCA/ls_S_ratio_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', np.array(ls_S_ratio))
 
 plt.figure()
 get_loss_fig(ls_loss, ls_S_ratio)
-plt.savefig(f'{save_path}/kSCA/loss_fig_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}.png')
+plt.savefig(f'{save_path}/kSCA/loss_fig_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}.png')
 
 plt.figure()
 plot_3D_K_coded(Y)
-plt.savefig(f'{save_path}/kSCA/projection_fig_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}.png')
+plt.savefig(f'{save_path}/kSCA/projection_fig_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}.png')
 
 ### SCA ###
 from linear_sca import *
@@ -169,36 +169,36 @@ wandb.finish
 U_qr, _ = jnp.linalg.qr(U)        
 Y = jnp.einsum('ji,kjl->kil', U_qr, center(X))
 
-np.save(f'{save_path}/SCA/U_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', U)
-np.save(f'{save_path}/SCA/Y_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', Y)
+np.save(f'{save_path}/SCA/U_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', U)
+np.save(f'{save_path}/SCA/Y_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y)
 
 for i in range(Y.shape[0]):
     Y = Y[:,:,:int(jnp.mean(RTs, axis=0).squeeze()[i])]
 
-np.save(f'{save_path}/SCA/Y_SCA_cut_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', Y)
+np.save(f'{save_path}/SCA/Y_SCA_cut_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y)
 
-np.save(f'{save_path}/SCA/ls_loss_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', np.array(ls_loss))
-np.save(f'{save_path}/SCA/ls_S_ratio_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', np.array(ls_S_ratio))
+np.save(f'{save_path}/SCA/ls_loss_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', np.array(ls_loss))
+np.save(f'{save_path}/SCA/ls_S_ratio_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', np.array(ls_S_ratio))
 
 plt.figure()
 get_loss_fig(ls_loss, ls_S_ratio)
-plt.savefig(f'{save_path}/SCA/loss_fig_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}.png')
+plt.savefig(f'{save_path}/SCA/loss_fig_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}.png')
     
 plt.figure()
 plot_3D_K_coded(Y)
-plt.savefig(f'{save_path}/SCA/projection_fig_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}.png')
+plt.savefig(f'{save_path}/SCA/projection_fig_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}.png')
 
 ### PCA ###
 Y_pca, PCs = get_pca(center(X), num_pcs=d)
 
-np.save(f'{save_path}/PCA/PCs_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', PCs)
-np.save(f'{save_path}/PCA/Y_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', Y_pca)
+np.save(f'{save_path}/PCA/PCs_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', PCs)
+np.save(f'{save_path}/PCA/Y_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y_pca)
 
 for i in range(Y_pca.shape[0]):
     Y_pca = Y_pca[:,:,:int(jnp.mean(RTs, axis=0).squeeze()[i])]
     
-np.save(f'{save_path}/PCA/Y_PCA_cut_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}', Y_pca)
+np.save(f'{save_path}/PCA/Y_PCA_cut_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y_pca)
 
 plt.figure() 
 plot_3D_K_coded(jnp.array(Y_pca))
-plt.savefig(f'{save_path}/PCA/projection_fig_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2}.png')
+plt.savefig(f'{save_path}/PCA/projection_fig_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}.png')
