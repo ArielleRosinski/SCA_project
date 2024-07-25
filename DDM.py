@@ -182,7 +182,7 @@ plot_3D_K_coded(Y)
 plt.savefig(f'{save_path}/SCA/projection_fig_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}.png')
 
 ### PCA ###
-Y_pca, PCs = get_pca(X, num_pcs=d)
+Y_pca, PCs = get_pca(center(X), num_pcs=d)
 
 np.save(f'{save_path}/PCA/PCs_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', PCs)
 np.save(f'{save_path}/PCA/Y_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}', Y_pca)
