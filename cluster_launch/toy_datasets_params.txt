@@ -1,8 +1,7 @@
 ArrayTaskID   traj       kernel       linear_run    sigma_low_rank   l2_     iterations    
-1             rotation   gaussian     True          1                1e-1    2000
-2             rotation   RQ           False         1                1e-1    6000
-3             infty      gaussian     True          0.75             1e-1    2000
-4             infty      RQ           False         0.75             1e-1    6000
+1             particle   gaussian     True          1.25             1e-1    2000
+2             particle   RQ           False         1.25             1e-1    6000
+
 
 
 

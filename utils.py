@@ -251,7 +251,7 @@ def plot_3D_K_coded(Y, elevation=30, azimuth=30, rotate=False):
     ax.set_ylabel('Dim. 2')
     ax.set_zlabel('Dim. 3')
     ax.set_box_aspect(aspect=None, zoom=0.85)
-    plt.title(f'kSCA; s = {compute_S_all_pairs(Y)}')
+    plt.title(f's = {compute_S_all_pairs(Y)}')
     
 def apply_gaussian_smoothing(data, sigma=1, axes=-1):
     smoothed_data = gaussian_filter(np.array(data), sigma=sigma, axes=axes)

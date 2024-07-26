@@ -29,8 +29,8 @@ flags.DEFINE_float('learning_rate', 1e-3, 'Initial learning rate.')
 flags.DEFINE_string('linear_run', 'True', 'Run linear methods')
 flags.DEFINE_integer('sigma', 4, 'Gaussian smoothing')
 flags.DEFINE_float('sigma_low_rank', 0.75, 'Low rank noise parameter')
-flags.DEFINE_float('dropout_rate', 0.1, 'dropout rate for particle')
-flags.DEFINE_float('kappa', 0.1, 'kappa for particle, Von Mises tuning curves')
+flags.DEFINE_float('dropout_rate', 0.0, 'dropout rate for particle')
+flags.DEFINE_float('kappa', 1e-1, 'kappa for particle, Von Mises tuning curves')
 flags.DEFINE_float('l2_', 1e-1, 'l2 param in RBF kernel when generating low rank correlated noise')
 
 
@@ -242,6 +242,7 @@ elif traj == 'expansion1D_isotropic':
 elif traj == 'particle':
     X = get_particle(K, N, T, key1, key2, dropout_rate=dropout_rate,  kappa = kappa)  
     np.save(f'{save_path}/{traj}/X', X)
+    X = add_low_rank_noise(X, key3, key4, sigma=sigma_low_rank, l2_=l2_)
 
 
 X_train=X[split:]
