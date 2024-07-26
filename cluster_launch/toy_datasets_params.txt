@@ -1,7 +1,8 @@
 ArrayTaskID   traj       kernel       linear_run    sigma_low_rank   l2_     iterations    
-1             particle   gaussian     True          1.25             1e-1    2000
-2             particle   RQ           False         1.25             1e-1    6000
-
+1             vdp        gaussian     True          2                1e-1    2000
+2             vdp        RQ           False         2                1e-1    6000
+3             duffing    gaussian     True          3                1e-1    2000
+4             duffing    RQ           False         3                1e-1    6000
 
 
 

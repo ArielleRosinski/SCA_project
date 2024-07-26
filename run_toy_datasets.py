@@ -243,7 +243,16 @@ elif traj == 'particle':
     X = get_particle(K, N, T, key1, key2, dropout_rate=dropout_rate,  kappa = kappa)  
     np.save(f'{save_path}/{traj}/X', X)
     X = add_low_rank_noise(X, key3, key4, sigma=sigma_low_rank, l2_=l2_)
-
+elif traj == 'vdp':
+    X = get_oscillator(K, T, type=van_der_pol, seed = seed)
+    np.save(f'{save_path}/{traj}/X', X)
+    X = project_X(X, key3)
+    X = add_low_rank_noise(X, key4, key5, sigma=sigma_low_rank, l2_=l2_)
+elif traj == 'duffing':
+    X = get_oscillator(K, T, type=duffing_oscillator, seed = seed)
+    np.save(f'{save_path}/{traj}/X', X)
+    X = project_X(X, key3)
+    X = add_low_rank_noise(X, key4, key5, sigma=sigma_low_rank, l2_=l2_)
 
 X_train=X[split:]
 X_test=X[:split]
