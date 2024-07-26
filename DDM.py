@@ -103,7 +103,7 @@ def add_low_rank_noise(X, key1, key2, proj_dims = 3, sigma_noise= 1 , l2_=0.1):
     B, _ = jnp.linalg.qr(B)
 
     time_points = jnp.linspace(0, 1, T)[None, :]
-    cov_matrix = K_X_Y_squared_exponential(time_points, time_points, l2_=l2_)
+    cov_matrix = K_X_Y_squared_exponential(time_points, time_points, l2=l2_)
     L = jnp.linalg.cholesky(cov_matrix + jnp.identity(T) * 1e-5)
 
     epsilon_t_uncorr = random.normal(key2, (trials, K, T, proj_dims)) * sigma_noise
