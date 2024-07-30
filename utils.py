@@ -69,9 +69,14 @@ def var_explained_kernel(alpha, kernel_function, A, X, l2, scale):
     var_explained = jnp.trace(alpha.T @ K_A_A_tilde @ K_A_A_tilde @ alpha) / jnp.trace(K_A_A_tilde)
     return var_explained
 
-def autocorr(x,lags):
-
-    corr=[ np.corrcoef(x[:-l],x[l:])[0][1] for l in lags]
+def autocorr(x, lags):
+    corr = []
+    for l in lags:
+        if l == 0:
+            corr_coef = np.corrcoef(x, x)[0, 1]
+        else:
+            corr_coef = np.corrcoef(x[:-l], x[l:])[0, 1]
+        corr.append(corr_coef)
     return np.array(corr)
 
 def get_pca(X_train, X_test=None, num_pcs = 2, test=False):
