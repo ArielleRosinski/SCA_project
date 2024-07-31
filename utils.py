@@ -58,15 +58,93 @@ def var_explained(X, U):
     sigma = np.cov(X_reshaped.T)
     return np.trace(U.T @ sigma @ U) / np.trace(sigma)
 
-def var_explained_kernel(alpha, kernel_function, A, X, l2, scale):
-    K, _, T = X.shape
+# def var_explained_kernel(alpha, kernel_function, A, X, l2, scale):
+#     K, _, T = X.shape
 
-    K_A_A = kernel_function(A, A, l2=l2, scale=scale)
-    K_A_A_reshaped = K_A_A.reshape(K, T, K, T)
-    mean = jnp.mean(K_A_A_reshaped, axis=(0,2), keepdims=True)   
-    K_A_A_tilde = (K_A_A_reshaped - mean).reshape(K*T, K*T)       
+#     K_A_A = kernel_function(A, A, l2=l2, scale=scale)
+#     K_A_A_reshaped = K_A_A.reshape(K, T, K, T)
+#     mean = jnp.mean(K_A_A_reshaped, axis=(0,2), keepdims=True)   
+#     K_A_A_tilde = (K_A_A_reshaped - mean).reshape(K*T, K*T)       
 
-    var_explained = jnp.trace(alpha.T @ K_A_A_tilde @ K_A_A_tilde @ alpha) / jnp.trace(K_A_A_tilde)
+#     var_explained = jnp.trace(alpha.T @ K_A_A_tilde @ K_A_A_tilde @ alpha) / jnp.trace(K_A_A_tilde)
+#     return var_explained
+
+def H_mult(K_X_Y, K, T, K_prime):
+    K_X_Y_reshaped = K_X_Y.reshape(K, T, K_prime, T)
+    mean = jnp.mean(K_X_Y_reshaped, axis=(0,2), keepdims=True)   
+    K_X_Y_tilde = (K_X_Y_reshaped - mean).reshape(K*T, K_prime*T)  
+        
+    return K_X_Y_tilde
+
+def squared_frobenius_norm(matrix):
+    return jnp.sum(matrix**2)
+
+def get_numerator(K, X, A_train, X_train, T, l2, scale, alpha, kernel_function, batch_size=10):
+    K_train, N, T = X_train.shape
+    numerator = 0
+
+    for start in range(0, K, batch_size):
+        end = min(start + batch_size, K)
+       
+        Y = jnp.swapaxes(X[start:end, :, :], 0, 1).reshape(N, -1)           ##for k in range(K): Y = jnp.swapaxes(X[k,:,:][None,:,:], 0, 1).reshape(N,-1)      
+        K_X_Y = kernel_function(A_train, Y, l2=l2, scale=scale)      
+  
+        K_X_Y_tilde = H_mult(K_X_Y, K_train, T, end-start )
+      
+        numerator += squared_frobenius_norm(alpha.T @ K_X_Y_tilde)  
+    return numerator    
+
+def get_denominator(A, X, K, T, l2, scale, kernel_function):
+    _, N, T = X.shape
+    diag_entries = jnp.array([kernel_function(A[:,i][:,None], A[:,i][:,None], l2=l2, scale=scale) for i in range(A.shape[-1])]).reshape(K, T)
+
+    mean = jnp.zeros((T, T))
+
+    for t in range(T):
+        for t_prime in range(T):
+            A_t = jnp.swapaxes(X[:,:,t][:,:,None], 0, 1).reshape(N,-1)     
+            A_t_prime = jnp.swapaxes(X[:,:,t_prime][:,:,None], 0, 1).reshape(N,-1)      
+
+            kernel_values = kernel_function(A_t, A_t_prime, l2=l2, scale=scale)
+
+            mean = mean.at[t, t_prime].set(jnp.sum(kernel_values) / (K * K))
+
+    centered_diag_entries = diag_entries - jnp.diag(mean)
+    return jnp.sum(centered_diag_entries)
+
+def var_explained_kernel(alpha, kernel_function, A_train, X_train, l2, scale, A_test=None, X_test = None, test=False, compute_matrix = False):
+    K, _, T = X_train.shape
+
+    if test == False:
+        if compute_matrix:
+            K_X_X = kernel_function(A_train, A_train, l2=l2, scale=scale)
+            K_X_X_tilde = H_mult(K_X_X, K, T, K)
+            numerator = jnp.trace(alpha.T @ K_X_X_tilde @ K_X_X_tilde @ alpha)
+
+            denominator = jnp.trace(K_X_X_tilde)
+        else: 
+            numerator = get_numerator(K, X_train, A_train, X_train, T, l2, scale, alpha, kernel_function)
+            denominator = get_denominator(A_train, X_train, K, T,  l2, scale, kernel_function)
+
+    else:
+        K_prime, _, _ = X_test.shape
+        if compute_matrix:
+            K_X_Y = kernel_function(A_train, A_test, l2=l2, scale=scale)
+            K_X_Y_tilde = H_mult(K_X_Y, K, T, K_prime)
+            numerator = jnp.trace(alpha.T @ K_X_Y_tilde @ K_X_Y_tilde.T @ alpha)
+
+            K_Y_Y = kernel_function(A_test, A_test, l2=l2, scale=scale)
+            K_Y_Y_tilde = H_mult(K_Y_Y, K_prime, T, K_prime)
+            denominator = jnp.trace(K_Y_Y_tilde)
+        
+        else:
+            numerator = get_numerator(K_prime, X_test, A_train, X_train, T, l2, scale, alpha, kernel_function)
+
+            denominator = get_denominator(A_test, X_test, K_prime, T,  l2, scale,kernel_function)
+
+
+    var_explained = numerator / denominator
+
     return var_explained
 
 def autocorr(x, lags):
