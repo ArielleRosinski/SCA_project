@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=10:00:00
 #SBATCH --mail-type=NONE
-#SBATCH --array=1-27
+#SBATCH --array=1-36
 #SBATCH --output=logs_R2/R2_%A_%a.out
 #SBATCH -p ampere
 
@@ -31,6 +31,7 @@ d=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' $config
 path_X=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $config)
 name=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $config)
 behaviour=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $5}' $config)
+spikes=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $6}' $config)
 
-python /rds/user/ar2217/hpc-work/SCA/SCA_project/R2_nonlinear.py --d $d --path_X $path_X --name $name --behaviour $behaviour
+python /rds/user/ar2217/hpc-work/SCA/SCA_project/R2_nonlinear.py --d $d --path_X $path_X --name $name --behaviour $behaviour --spikes $spikes
 
