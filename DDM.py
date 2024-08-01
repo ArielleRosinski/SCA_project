@@ -23,7 +23,7 @@ from utils import *
 
 flags.DEFINE_float('sigma', 0.35, 'DDM param')
 flags.DEFINE_integer('d', 3, 'subspace dimensionality')
-flags.DEFINE_integer('c', 40, 'inducing points')
+flags.DEFINE_integer('c', 30, 'inducing points')
 flags.DEFINE_integer('iterations', 1000, 'iters')
 flags.DEFINE_float('learning_rate', 1e-2, 'Initial learning rate.')
 flags.DEFINE_string('save_path', '/rds/user/ar2217/hpc-work/SCA/outputs/DDM', 'save path')
