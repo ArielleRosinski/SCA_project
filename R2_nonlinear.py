@@ -88,7 +88,7 @@ X_test = X[:split,:,:-lag].swapaxes(1,2).reshape(-1, X.shape[1])
 ls_l2_reg = [1e-2, 1e-3, 1e-4, 1e-6, 1e-8, 0]
 r2 = float('-inf') 
 for l2_reg in ls_l2_reg:
-    params_temp, ls_loss_temp = optimize(X_train, y_train, l2_reg, layer_sizes = [d, 10, t], num_iterations = iterations, seed=42, learning_rate = 1e-3)
+    params_temp, ls_loss_temp = optimize(X_train, y_train, l2_reg, layer_sizes = [d, 10, t], num_iterations = iterations, seed=1, learning_rate = 1e-3)
 
     predictions_temp = predict(params_temp, X_test)
     r2_temp = r2_score(y_test, predictions_temp)

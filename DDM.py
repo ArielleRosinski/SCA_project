@@ -122,7 +122,7 @@ T = (T // 10) * 10
 reshaped_paths = paths[:,:,:T].reshape(paths.shape[0], paths.shape[1], -1, 5)
 reshaped_paths = reshaped_paths.mean(axis=-1)
 
-neural_traces = relu(project(paths, key=key1, proj_dims=proj_dims))
+neural_traces = relu(project(reshaped_paths, key=key1, proj_dims=proj_dims))
 neural_traces = neural_traces * 5
 neural_traces = add_low_rank_noise(neural_traces, key2, key3, sigma_noise = sigma_noise, l2_=l2_)        #(trials, K, N, T)
 
@@ -150,7 +150,7 @@ np.save(f'{save_path}/kSCA/params_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_di
 _, u, l2, scale = get_params(params, kernel_function=kernel_function)
 K_u_u_K_u_A_alpha_H, K_A_u, K_u_u, _, _  = get_alpha(params, A, X_train, kernel_function, d)
 
-X_reshaped = X.swapaxes(0,1).reshape(N,-1)
+X_reshaped = X_train.swapaxes(0,1).reshape(N,-1)
 K_u_X = kernel_function(u, X_reshaped, l2=l2, scale=scale).reshape(-1,K,T).swapaxes(0,1)  
 Y = jnp.einsum('ji,kjm->kim',  K_u_u_K_u_A_alpha_H, K_u_X)
 Y = center(Y)
@@ -159,6 +159,10 @@ np.save(f'{save_path}/kSCA/Y_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l
 
 Y = jnp.mean(Y.reshape(trials - split, -1, d, T), axis=0)
 np.save(f'{save_path}/kSCA/Y_mean_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y)
+
+plt.figure()
+plot_3D_K_coded(Y)
+plt.savefig(f'{save_path}/kSCA/projection_fig_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}.png')
 
 K_u_u_K_u_A_alpha_H, K_A_u, K_u_u, _ ,_ = get_alpha(params, A, X_test, kernel_function, d)
 K_test, _, _ = X_test.shape
@@ -178,10 +182,6 @@ plt.figure()
 get_loss_fig(ls_loss, ls_S_ratio)
 plt.savefig(f'{save_path}/kSCA/loss_fig_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}.png')
 
-plt.figure()
-plot_3D_K_coded(Y)
-plt.savefig(f'{save_path}/kSCA/projection_fig_kSCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}.png')
-
 ### SCA ###
 from linear_sca import *
 wandb.init(project="", name="", mode="disabled")
@@ -196,13 +196,16 @@ Y = jnp.einsum('ji,kjl->kil', U_qr, center(X_train))
 np.save(f'{save_path}/SCA/Y_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y)
 
 Y = jnp.mean(Y.reshape(trials - split, -1, d, T), axis=0)
-np.save(f'{save_path}/kSCA/Y_mean_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y)
+np.save(f'{save_path}/SCA/Y_mean_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y)
 
+plt.figure()
+plot_3D_K_coded(Y)
+plt.savefig(f'{save_path}/SCA/projection_fig_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}.png')
    
 Y_test = jnp.einsum('ji,kjl->kil', U_qr, center(X_test))
 np.save(f'{save_path}/SCA/Y_test_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y_test)
 Y_test = jnp.mean(Y_test.reshape(split, -1, d, T), axis=0)
-np.save(f'{save_path}/kSCA/Y_mean_test_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y_test)
+np.save(f'{save_path}/SCA/Y_mean_test_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y_test)
 
 np.save(f'{save_path}/SCA/ls_loss_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', np.array(ls_loss))
 np.save(f'{save_path}/SCA/ls_S_ratio_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', np.array(ls_S_ratio))
@@ -211,9 +214,7 @@ plt.figure()
 get_loss_fig(ls_loss, ls_S_ratio)
 plt.savefig(f'{save_path}/SCA/loss_fig_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}.png')
     
-plt.figure()
-plot_3D_K_coded(Y)
-plt.savefig(f'{save_path}/SCA/projection_fig_SCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}.png')
+
 
 ### PCA ###
 #Y_pca, PCs = get_pca(center(X_train), num_pcs=d)
@@ -231,16 +232,17 @@ np.save(f'{save_path}/PCA/Y_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{
 
 
 Y_pca = jnp.mean(Y_pca.reshape(trials - split, -1, d, T), axis=0)
-np.save(f'{save_path}/kSCA/Y_mean_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y_pca)
+np.save(f'{save_path}/PCA/Y_mean_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y_pca)
 
+plt.figure() 
+plot_3D_K_coded(jnp.array(Y_pca))
+plt.savefig(f'{save_path}/PCA/projection_fig_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}.png')
 
 Y_pca_test = pca.fit(X_pca_train).transform(X_pca_test)
 Y_pca_test = Y_pca_test.reshape(-1, T, d).swapaxes(1,2)
 np.save(f'{save_path}/PCA/Y_test_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y_pca_test)
 Y_pca_test = jnp.mean(Y_pca_test.reshape(split, -1, d, T), axis=0)
-np.save(f'{save_path}/kSCA/Y_mean_test_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y_pca_test)
+np.save(f'{save_path}/PCA/Y_mean_test_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}', Y_pca_test)
 
 
-plt.figure() 
-plot_3D_K_coded(jnp.array(Y_pca))
-plt.savefig(f'{save_path}/PCA/projection_fig_PCA_{d}d_sigma{sigma_noise}_proj_dims{proj_dims}_l2{l2_}.png')
+
