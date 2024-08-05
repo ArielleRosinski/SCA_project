@@ -46,6 +46,7 @@ flags.DEFINE_integer('split', 20, 'test/train split')
 flags.DEFINE_integer('lag', 5, 'behaviour/neural prediction time lag')
 flags.DEFINE_integer('iterations', 20000, 'training iterations')
 flags.DEFINE_string('spikes', 'True', 'whether to use psths (False) or spikes (True)')
+flags.DEFINE_string('fullX', 'False', 'whether to use psths (False) or spikes (True)')
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
@@ -58,6 +59,7 @@ split = FLAGS.split
 lag = FLAGS.lag
 behaviour = FLAGS.behaviour
 spikes = FLAGS.spikes
+fullX = FLAGS.fullX
 
 if spikes == 'False':
     path_Y = f'/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/behaviour/{behaviour}.npy'
@@ -81,14 +83,17 @@ t = 6 if behaviour == 'aug_behaviour' else 2
 y_train = behaviour_[split:,:,lag:].swapaxes(1,2).reshape(-1, behaviour_.shape[1])
 y_test = behaviour_[:split,:,lag:].swapaxes(1,2).reshape(-1, behaviour_.shape[1])
 
-X = np.load(path_X)
+if fullX == 'True':
+    X = np.load(path_X).swapaxes(1,2)
+else:
+    X = np.load(path_X)
 X_train = X[split:,:,:-lag].swapaxes(1,2).reshape(-1, X.shape[1])
 X_test = X[:split,:,:-lag].swapaxes(1,2).reshape(-1, X.shape[1])
 
 ls_l2_reg = [1e-2, 1e-3, 1e-4, 1e-6, 1e-8, 0]
 r2 = float('-inf') 
 for l2_reg in ls_l2_reg:
-    params_temp, ls_loss_temp = optimize(X_train, y_train, l2_reg, layer_sizes = [d, 10, t], num_iterations = iterations, seed=1, learning_rate = 1e-3)
+    params_temp, ls_loss_temp = optimize(X_train, y_train, l2_reg, layer_sizes = [d, 10, t], num_iterations = iterations, seed=42, learning_rate = 1e-3)
 
     predictions_temp = predict(params_temp, X_test)
     r2_temp = r2_score(y_test, predictions_temp)

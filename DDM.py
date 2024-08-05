@@ -56,23 +56,23 @@ def DDM(mu, sigma, dt, total_time, key):
     for i in range(num_trajectories):
         current_key = keys[i]
         for t in range(num_steps): 
-            if jnp.abs(x[i, t]) < 1:
-                normal_sample = random.normal(current_key, shape=())
-                x = x.at[i, t + 1].set(x[i, t] + mu[i] * dt + sigma * jnp.sqrt(dt) * normal_sample)
-                current_key, subkey = random.split(current_key)
-            else:
-                ls_RT.append(t)
-                ls_acc.append(1 if jnp.sign(x[i, t]) == jnp.sign(mu[i]) else -1)
+            #if jnp.abs(x[i, t]) < 1:
+            normal_sample = random.normal(current_key, shape=())
+            x = x.at[i, t + 1].set(x[i, t] + mu[i] * dt + sigma * jnp.sqrt(dt) * normal_sample)
+            current_key, subkey = random.split(current_key)
+            # else:
+            #     ls_RT.append(t)
+            #     ls_acc.append(1 if jnp.sign(x[i, t]) == jnp.sign(mu[i]) else -1)
                 
-                x = x.at[i, t:].set(jnp.sign(x[i, t]))
-                break
+            #     x = x.at[i, t:].set(jnp.sign(x[i, t]))
+            #     break
     return x, ls_RT, ls_acc
 
 mu = np.array([-0.64, -0.32, -0.16, -0.08, -0.04, 0.0, 0.04, 0.08, 0.16, 0.32, 0.64])  
 dt = 0.1
-total_time = 100
+total_time = 10
 trials = 50    #150
-split = 20
+split = 10
 
 ls_RTs = []
 ls_accs = []
@@ -81,12 +81,12 @@ for i in range(trials):
     key = random.PRNGKey(42 + i)
     path, ls_RT, ls_acc = DDM(mu, sigma, dt, total_time, key) 
     paths = paths.at[i].set(path)
-    ls_RTs.append(ls_RT)
-    ls_accs.append(ls_acc)
+    #ls_RTs.append(ls_RT)
+    #ls_accs.append(ls_acc)
 
 accs = jnp.array(ls_accs)
 RTs = jnp.array(ls_RTs)
-paths = paths[:,:, :jnp.max(RTs)]
+#paths = paths[:,:, :jnp.max(RTs)]
 
 
 
@@ -117,12 +117,12 @@ def add_low_rank_noise(X, key1, key2, proj_dims = 3, sigma_noise= 1 , l2_=0.1):
 key = random.PRNGKey(0)
 key1, key2, key3 = random.split(key, 3)
 
-T = paths.shape[-1]
-T = (T // 10) * 10 
-reshaped_paths = paths[:,:,:T].reshape(paths.shape[0], paths.shape[1], -1, 5)
-reshaped_paths = reshaped_paths.mean(axis=-1)
+# T = paths.shape[-1]
+# T = (T // 10) * 10 
+# reshaped_paths = paths[:,:,:T].reshape(paths.shape[0], paths.shape[1], -1, 5)
+# reshaped_paths = reshaped_paths.mean(axis=-1)
 
-neural_traces = relu(project(reshaped_paths, key=key1, proj_dims=proj_dims))
+neural_traces = relu(project(paths, key=key1, proj_dims=proj_dims))
 neural_traces = neural_traces * 5
 neural_traces = add_low_rank_noise(neural_traces, key2, key3, sigma_noise = sigma_noise, l2_=l2_)        #(trials, K, N, T)
 

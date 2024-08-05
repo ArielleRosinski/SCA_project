@@ -1,41 +1,8 @@
-ArrayTaskID  d     path_X                                                                                    name      behaviour        spikes
-1            2     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_2d.npy            pca       hand_vel         True
-2            3     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_3d.npy            pca       hand_vel         True
-3            4     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_4d.npy            pca       hand_vel         True
-4            5     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_5d.npy            pca       hand_vel         True
-5            6     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_6d.npy            pca       hand_vel         True
-6            7     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_7d.npy            pca       hand_vel         True
-7            8     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_8d.npy            pca       hand_vel         True
-8            9     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_9d.npy            pca       hand_vel         True
-9            10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_10d.npy           pca       hand_vel         True
-10           2     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_2d.npy              pca       hand_vel         False
-11           3     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_3d.npy              pca       hand_vel         False
-12           4     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_4d.npy              pca       hand_vel         False
-13           5     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_5d.npy              pca       hand_vel         False
-14           6     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_6d.npy              pca       hand_vel         False
-15           7     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_7d.npy              pca       hand_vel         False
-16           8     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_8d.npy              pca       hand_vel         False
-17           9     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_9d.npy              pca       hand_vel         False
-18           10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_10d.npy             pca       hand_vel         False
-19           2     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_2d.npy              pca       torques          False
-20           3     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_3d.npy              pca       torques          False
-21           4     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_4d.npy              pca       torques          False
-22           5     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_5d.npy              pca       torques          False
-23           6     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_6d.npy              pca       torques          False
-24           7     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_7d.npy              pca       torques          False
-25           8     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_8d.npy              pca       torques          False
-26           9     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_9d.npy              pca       torques          False
-27           10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_10d.npy             pca       torques          False
-28           2     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_2d.npy              pca       aug_behaviour    False
-29           3     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_3d.npy              pca       aug_behaviour    False
-30           4     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_4d.npy              pca       aug_behaviour    False
-31           5     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_5d.npy              pca       aug_behaviour    False
-32           6     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_6d.npy              pca       aug_behaviour    False
-33           7     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_7d.npy              pca       aug_behaviour    False
-34           8     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_8d.npy              pca       aug_behaviour    False
-35           9     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_9d.npy              pca       aug_behaviour    False
-36           10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_10d.npy             pca       aug_behaviour    False
-
+ArrayTaskID  d     path_X                                                                                    name      behaviour        spikes  fullX
+1            182   /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/psth.npy                              X         hand_vel         False   True
+2            182   /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/psth.npy                              X         torques          False   True
+3            182   /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/psth.npy                              X         aug_behaviour    False   True
+4            182   /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/train_spksmth.npy                     X         hand_vel         True    True
 
 
 
