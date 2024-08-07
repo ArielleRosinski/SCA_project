@@ -44,7 +44,7 @@ flags.DEFINE_string('name', '',
 flags.DEFINE_integer('d', 3, 'subspace dimensionality')
 flags.DEFINE_integer('split', 20, 'test/train split')
 flags.DEFINE_integer('lag', 5, 'behaviour/neural prediction time lag')
-flags.DEFINE_integer('iterations', 20000, 'training iterations')
+flags.DEFINE_integer('iterations', 30000, 'training iterations')
 flags.DEFINE_string('spikes', 'True', 'whether to use psths (False) or spikes (True)')
 flags.DEFINE_string('fullX', 'False', 'whether to use psths (False) or spikes (True)')
 
