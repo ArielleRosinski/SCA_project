@@ -59,7 +59,6 @@ K, _, T = X.shape
 
 wandb.init(project="SCA-project-MC_Maze", name=f"d={d}_seed{seed}", mode=mode)
 U, ls_loss, ls_S_ratio = optimize(X,d=d, learning_rate=learning_rate, seed=seed, iterations=iterations) 
-np.save(f'{save_path}/U_psth_{d}d', U)
 wandb.finish()
 
 U_qr, _ = jnp.linalg.qr(U)        
