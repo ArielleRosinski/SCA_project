@@ -30,6 +30,8 @@ config=/rds/user/ar2217/hpc-work/SCA/SCA_project/cluster_launch/sca_params.txt
 d=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' $config)
 dataset_path=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $config)
 save_path=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $config)
+learning_rate=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $5}' $config)
+iterations=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $6}' $config)
 
-python /rds/user/ar2217/hpc-work/SCA/SCA_project/MC_Maze_linear_SCA.py --d $d --dataset_path $dataset_path --save_path $save_path 
+python /rds/user/ar2217/hpc-work/SCA/SCA_project/MC_Maze_linear_SCA.py --d $d --dataset_path $dataset_path --save_path $save_path --learning_rate $learning_rate --iterations $iterations
 
