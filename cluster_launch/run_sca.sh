@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=10:00:00
 #SBATCH --mail-type=NONE
-#SBATCH --array=1-9
+#SBATCH --array=1-18
 #SBATCH --output=logs_sca/sca_%A_%a.out
 #SBATCH -p ampere
 
@@ -29,11 +29,7 @@ config=/rds/user/ar2217/hpc-work/SCA/SCA_project/cluster_launch/sca_params.txt
 
 d=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' $config)
 dataset_path=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $config)
-dataset_path_pcaFalse=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $config)
-save_path=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $5}' $config)
-seed=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $6}' $config)
-mode=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $7}' $config)
-noise=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $8}' $config)
+save_path=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $config)
 
-python /rds/user/ar2217/hpc-work/SCA/SCA_project/MC_Maze_linear_SCA.py --d $d --dataset_path $dataset_path --dataset_path_pcaFalse $dataset_path_pcaFalse --save_path $save_path --seed $seed --mode $mode --noise $noise 
+python /rds/user/ar2217/hpc-work/SCA/SCA_project/MC_Maze_linear_SCA.py --d $d --dataset_path $dataset_path --save_path $save_path 
 
