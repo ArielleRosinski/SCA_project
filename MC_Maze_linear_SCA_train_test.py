@@ -75,4 +75,4 @@ np.save(f'{save_path}/ls_loss_{d}d', np.array(ls_loss))
 np.save(f'{save_path}/ls_S_ratio_{d}d', np.array(ls_S_ratio))
 
 Y_test = jnp.einsum('ji,kjl->kil', U_qr, X_test)  
-np.save(f'{save_path}/Y_{d}d', Y_test)
+np.save(f'{save_path}/Y_test_{d}d', Y_test)
