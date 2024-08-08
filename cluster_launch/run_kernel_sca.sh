@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=10:00:00
 #SBATCH --mail-type=NONE
-#SBATCH --array=1-1
+#SBATCH --array=1-18
 #SBATCH --output=logs_kernel_sca/kernel_sca_%A_%a.out
 #SBATCH -p ampere
 
@@ -31,9 +31,9 @@ d=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' $config
 path_X=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $config)
 path_A=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $config)
 save_path=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $5}' $config)
-seed=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $6}' $config)
-mode=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $7}' $config)
-kernel=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $8}' $config)
+learning_rate=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $6}' $config)
+iterations=$(awk -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $7}' $config)
 
-python /rds/user/ar2217/hpc-work/SCA/SCA_project/run_kernel_sca_inducing_points.py --d $d --path_X $path_X --path_A $path_A --save_path $save_path --seed $seed --mode $mode --kernel $kernel
+
+python /rds/user/ar2217/hpc-work/SCA/SCA_project/run_kernel_sca_inducing_points.py --d $d --path_X $path_X --path_A $path_A --save_path $save_path --learning_rate $learning_rate --iterations $iterations
 
