@@ -91,7 +91,7 @@ if save == 'True':
     np.save(f'{save_path}/params_{d}d_{kernel}', params)
 
     _, u, l2, scale = get_params(params, kernel_function=kernel_function)
-    K_u_u_K_u_A_alpha_H, _, _   = get_alpha(params, A, X, kernel_function, d)
+    K_u_u_K_u_A_alpha_H, _, _ ,_, _  = get_alpha(params, A, X, kernel_function, d)
 
     X_reshaped = X.swapaxes(0,1).reshape(N,-1)
     K_u_X = kernel_function(u, X_reshaped, l2=l2, scale=scale).reshape(-1,K,T).swapaxes(0,1)  
