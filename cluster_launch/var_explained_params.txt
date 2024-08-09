@@ -1,23 +1,13 @@
 ArrayTaskID   d          kernel 
-1             2          linear            
-2             3          linear            
-3             4          linear               
-4             5          linear            
-5             6          linear            
-6             7          linear         
-7             8          linear            
-8             9          linear            
-9             10         linear          
-10            2          gaussian 
-11            3          gaussian 
-12            4          gaussian 
-13            5          gaussian 
-14            6          gaussian 
-15            7          gaussian 
-16            8          gaussian 
-17            9          gaussian 
-18            10         gaussian 
-
+1             2          gaussian          
+2             3          gaussian          
+3             4          gaussian             
+4             5          gaussian          
+5             6          gaussian          
+6             7          gaussian       
+7             8          gaussian          
+8             9          gaussian          
+9             10         gaussian        
 
 
 
