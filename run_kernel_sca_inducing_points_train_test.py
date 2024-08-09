@@ -75,7 +75,7 @@ c = FLAGS.c
 print(f'Using d = {d}, kernel={kernel}')
 
 X_train = jnp.array( np.load(path_X_train) )
-X_test = jnp.array( np.load(path_X_train) )
+X_test = jnp.array( np.load(path_X_test) )
 K, N, T = X_train.shape
 A = jnp.array( np.load(path_A) )
 
