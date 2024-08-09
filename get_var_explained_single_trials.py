@@ -33,7 +33,7 @@ elif kernel == 'rational_quadratic':
     kernel_function = K_X_Y_rational_quadratic
 
 A_train = jnp.load('/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/A_softNormMax_centerFalse_pcaFalse.npy')
-X_train = jnp.load('/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/A_softNormMax_centerFalse_pcaFalse.npy')
+X_train = jnp.load('/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/X_softNormMax_centerFalse_pcaFalse.npy')
 
 
 params = jnp.load(f'/rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_kernel_pcaFalse/params_{d}d_{kernel}.npy', allow_pickle=True).tolist()
