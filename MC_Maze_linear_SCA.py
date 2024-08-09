@@ -26,7 +26,7 @@ from absl import app
 from absl import flags
 import sys
 
-flags.DEFINE_integer('seed', 42, 'Random seed to set')
+flags.DEFINE_integer('seed', 1, 'Random seed to set') #42
 flags.DEFINE_integer('d', 3, 'Subspace dimensionality')
 flags.DEFINE_integer('iterations', 5000, 'training iterations')
 flags.DEFINE_string('dataset_path', "/rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze/X_softNormMax.npy",
