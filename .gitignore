@@ -7,3 +7,5 @@ wandb/
 cluster_launch/logs_sca/*
 
 jPCA/*
+
+code_pre_git/*
