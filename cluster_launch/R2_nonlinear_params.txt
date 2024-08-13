@@ -1,0 +1,85 @@
+ArrayTaskID  d     path_X                                                                                                  name      behaviour      fullX       spikes
+1            2     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_2d.npy                            pca       hand_vel       False       False 
+2            3     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_3d.npy                            pca       hand_vel       False       False 
+3            4     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_4d.npy                            pca       hand_vel       False       False 
+4            5     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_5d.npy                            pca       hand_vel       False       False 
+5            6     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_6d.npy                            pca       hand_vel       False       False 
+6            7     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_7d.npy                            pca       hand_vel       False       False 
+7            8     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_8d.npy                            pca       hand_vel       False       False 
+8            9     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_9d.npy                            pca       hand_vel       False       False 
+9            10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_psth/softNorm/Y_pca_10d.npy                           pca       hand_vel       False       False 
+10           2     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_kernel_pcaFalse/projection_2d_gaussian.npy    gaussian  hand_vel       False       False 
+11           3     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_kernel_pcaFalse/projection_3d_gaussian.npy    gaussian  hand_vel       False       False 
+12           4     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_kernel_pcaFalse/projection_4d_gaussian.npy    gaussian  hand_vel       False       False 
+13           5     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_kernel_pcaFalse/projection_5d_gaussian.npy    gaussian  hand_vel       False       False 
+14           6     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_kernel_pcaFalse/projection_6d_gaussian.npy    gaussian  hand_vel       False       False 
+15           7     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_kernel_pcaFalse/projection_7d_gaussian.npy    gaussian  hand_vel       False       False 
+16           8     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_kernel_pcaFalse/projection_8d_gaussian.npy    gaussian  hand_vel       False       False 
+17           9     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_kernel_pcaFalse/projection_9d_gaussian.npy    gaussian  hand_vel       False       False 
+18           10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_kernel_pcaFalse/projection_10d_gaussian.npy   gaussian  hand_vel       False       False 
+19           2     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_linear_pcaFalse/Y_2d.npy                      linear    hand_vel       False       False 
+20           3     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_linear_pcaFalse/Y_3d.npy                      linear    hand_vel       False       False 
+21           4     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_linear_pcaFalse/Y_4d.npy                      linear    hand_vel       False       False 
+22           5     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_linear_pcaFalse/Y_5d.npy                      linear    hand_vel       False       False 
+23           6     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_linear_pcaFalse/Y_6d.npy                      linear    hand_vel       False       False 
+24           7     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_linear_pcaFalse/Y_7d.npy                      linear    hand_vel       False       False 
+25           8     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_linear_pcaFalse/Y_8d.npy                      linear    hand_vel       False       False 
+26           9     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_linear_pcaFalse/Y_9d.npy                      linear    hand_vel       False       False 
+27           10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_psth_linear_pcaFalse/Y_10d.npy                     linear    hand_vel       False       False 
+28           2     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_2d.npy                          pca       hand_vel       False       True
+29           3     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_3d.npy                          pca       hand_vel       False       True
+30           4     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_4d.npy                          pca       hand_vel       False       True
+31           5     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_5d.npy                          pca       hand_vel       False       True
+32           6     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_6d.npy                          pca       hand_vel       False       True
+33           7     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_7d.npy                          pca       hand_vel       False       True
+34           8     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_8d.npy                          pca       hand_vel       False       True
+35           9     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_9d.npy                          pca       hand_vel       False       True
+36           10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/pca_spikes/softNorm/Y_pca_10d.npy                         pca       hand_vel       False       True
+37           2     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_kernel_pcaFalse/projection_2d_gaussian.npy  gaussian  hand_vel       False       True
+38           3     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_kernel_pcaFalse/projection_3d_gaussian.npy  gaussian  hand_vel       False       True
+39           4     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_kernel_pcaFalse/projection_4d_gaussian.npy  gaussian  hand_vel       False       True
+40           5     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_kernel_pcaFalse/projection_5d_gaussian.npy  gaussian  hand_vel       False       True
+41           6     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_kernel_pcaFalse/projection_6d_gaussian.npy  gaussian  hand_vel       False       True
+42           7     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_kernel_pcaFalse/projection_7d_gaussian.npy  gaussian  hand_vel       False       True
+43           8     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_kernel_pcaFalse/projection_8d_gaussian.npy  gaussian  hand_vel       False       True
+44           9     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_kernel_pcaFalse/projection_9d_gaussian.npy  gaussian  hand_vel       False       True
+45           10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_kernel_pcaFalse/projection_10d_gaussian.npy gaussian  hand_vel       False       True
+46           2     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_linear_pcaFalse/Y_2d.npy                    linear    hand_vel       False       True
+47           3     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_linear_pcaFalse/Y_3d.npy                    linear    hand_vel       False       True
+48           4     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_linear_pcaFalse/Y_4d.npy                    linear    hand_vel       False       True
+49           5     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_linear_pcaFalse/Y_5d.npy                    linear    hand_vel       False       True
+50           6     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_linear_pcaFalse/Y_6d.npy                    linear    hand_vel       False       True
+51           7     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_linear_pcaFalse/Y_7d.npy                    linear    hand_vel       False       True
+52           8     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_linear_pcaFalse/Y_8d.npy                    linear    hand_vel       False       True
+53           9     /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_linear_pcaFalse/Y_9d.npy                    linear    hand_vel       False       True
+54           10    /rds/user/ar2217/hpc-work/SCA/outputs/MC_Maze/neural_spikes_linear_pcaFalse/Y_10d.npy                   linear    hand_vel       False       True
+55           182   /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/psth.npy                                            X         hand_vel       True        False
+56           182   /rds/user/ar2217/hpc-work/SCA/datasets/MC_Maze_20ms/train_spksmth.npy                                   X         hand_vel       True        True 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

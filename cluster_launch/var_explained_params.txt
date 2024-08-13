@@ -1,0 +1,85 @@
+ArrayTaskID   d          kernel 
+1             2          gaussian          
+2             3          gaussian          
+3             4          gaussian             
+4             5          gaussian          
+5             6          gaussian          
+6             7          gaussian       
+7             8          gaussian          
+8             9          gaussian          
+9             10         gaussian        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

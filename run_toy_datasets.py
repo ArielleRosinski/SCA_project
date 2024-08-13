@@ -209,6 +209,10 @@ elif traj == 'infty':
     np.save(f'{save_path}/{traj}/X', X)
     X = project_X(X, key2)
     X = add_low_rank_noise(X, key3, key4, sigma=sigma_low_rank, l2_=l2_)
+elif traj == 'infty_no_noise':
+    X = get_infty_traj(K, T, key1)
+    np.save(f'{save_path}/{traj}/X', X)
+    X = project_X(X, key2)
 elif traj == 'expansion':
     X = get_expansions(K, T, key1, key2)
     np.save(f'{save_path}/{traj}/X', X)
