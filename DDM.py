@@ -69,8 +69,8 @@ def DDM(mu, sigma, dt, total_time, key):
     return x, ls_RT, ls_acc
 
 mu = np.array([-0.64, -0.32, -0.16, -0.08, -0.04, -0.02, 0.0, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64])  
-dt = 0.1
-total_time = 10
+dt = 1
+total_time = 100
 trials = 30    
 split = 10
 
