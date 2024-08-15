@@ -295,10 +295,10 @@ plot_2D(Y)
 plt.title(f'kSCA; s = {compute_S_all_pairs(Y)}')
 plt.savefig(f'{save_path}/{traj}/{kernel}/projection_fig_sigma{sigma_low_rank}_l2{l2_}.png')
 
-Y_smoothed = apply_gaussian_smoothing(Y, sigma=sigma)
-plt.figure()
-plot_2D(Y_smoothed)
-plt.savefig(f'{save_path}/{traj}/{kernel}/projection_smoothed_fig_sigma{sigma_low_rank}_l2{l2_}.png')
+# Y_smoothed = apply_gaussian_smoothing(Y, sigma=sigma)
+# plt.figure()
+# plot_2D(Y_smoothed)
+# plt.savefig(f'{save_path}/{traj}/{kernel}/projection_smoothed_fig_sigma{sigma_low_rank}_l2{l2_}.png')
 
 #np.save(f'{save_path}/{traj}/{kernel}/var_explained_{dropout_rate}_{kappa}', var_explained_kernel(alpha, kernel_function, A, X_train, l2, scale) )
 
@@ -338,10 +338,10 @@ if linear_run == 'True':
     plt.title(f'SCA; s = {compute_S_all_pairs(Y)}')
     plt.savefig(f'{save_path}/{traj}/linear/projection_fig_sigma{sigma_low_rank}_l2{l2_}.png')
 
-    Y_smoothed = apply_gaussian_smoothing(Y, sigma=sigma)
-    plt.figure()
-    plot_2D(Y_smoothed)
-    plt.savefig(f'{save_path}/{traj}/linear/projection_smoothed_fig_sigma{sigma_low_rank}_l2{l2_}.png')
+    # Y_smoothed = apply_gaussian_smoothing(Y, sigma=sigma)
+    # plt.figure()
+    # plot_2D(Y_smoothed)
+    # plt.savefig(f'{save_path}/{traj}/linear/projection_smoothed_fig_sigma{sigma_low_rank}_l2{l2_}.png')
 
     np.save(f'{save_path}/{traj}/linear/U_sigma{sigma_low_rank}_l2{l2_}', U)
 
@@ -368,10 +368,10 @@ if linear_run == 'True':
     plt.title(f'PCA; s = {compute_S_all_pairs(jnp.array(Y_pca))}')
     plt.savefig(f'{save_path}/{traj}/pca/projection_fig_sigma{sigma_low_rank}_l2{l2_}.png')
 
-    Y_smoothed = apply_gaussian_smoothing(Y_pca, sigma=sigma)
-    plt.figure()
-    plot_2D(Y_smoothed)
-    plt.savefig(f'{save_path}/{traj}/pca/projection_smoothed_fig_sigma{sigma_low_rank}_l2{l2_}.png')
+    # Y_smoothed = apply_gaussian_smoothing(Y_pca, sigma=sigma)
+    # plt.figure()
+    # plot_2D(Y_smoothed)
+    # plt.savefig(f'{save_path}/{traj}/pca/projection_smoothed_fig_sigma{sigma_low_rank}_l2{l2_}.png')
 
     np.save(f'{save_path}/{traj}/pca/PCs_sigma{sigma_low_rank}_l2{l2_}', PCs)
 

@@ -13,6 +13,7 @@ import wandb
 from itertools import combinations
 from scipy.integrate import solve_ivp
 from scipy.ndimage import gaussian_filter
+from kernels import *
 
 def pre_processing(X,
                soft_normalize = 'churchland',
@@ -172,8 +173,21 @@ def get_pca(X_train, X_test=None, num_pcs = 2, test=False):
     Y_pca = Y_pca.reshape(-1, T, num_pcs).swapaxes(1,2)
     return Y_pca, PCs
 
-def single_pair_S(X, id_1, id_2, operator):
-    XX = jnp.einsum('ij,kj->ik', X[id_1, :, :], X[id_2, :, :])          #(N,N)
+# def single_pair_S(X, id_1, id_2, operator):
+#     XX = jnp.einsum('ij,kj->ik', X[id_1, :, :], X[id_2, :, :])          #(N,N)
+#     XX_product = XX @ XX
+
+#     if operator == 'minus':
+#         return jnp.trace(XX)**2 - jnp.trace(XX_product)
+    
+#     elif operator == 'plus':
+#         return jnp.trace(XX)**2 + jnp.trace(XX_product)
+    
+def single_pair_S(X, id_1, id_2, operator, kernel=False):
+    if kernel:
+        XX = K_X_Y_squared_exponential(X[id_1, :, :].T, X[id_2, :, :].T)
+    else: 
+        XX = jnp.einsum('ij,kj->ik', X[id_1, :, :], X[id_2, :, :]) 
     XX_product = XX @ XX
 
     if operator == 'minus':
@@ -205,14 +219,24 @@ def compute_S(X, seed=42, iterations=1000, num_pairs = 100, ratio=True):
 
     return S_list
 
-def compute_S_all_pairs(X):
+# def compute_S_all_pairs(X):
+#     K, _, _ = X.shape
+#     index_pairs = jnp.array(list(combinations(range(K), 2)))
+
+#     batched_numerator = vmap(single_pair_S, in_axes=(None, 0, 0, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'minus')
+#     batched_denominator = vmap(single_pair_S, in_axes=(None, 0, 0, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'plus') 
+
+#     return jnp.sum(batched_numerator) / jnp.sum(batched_denominator) 
+
+def compute_S_all_pairs(X, kernel=False):
     K, _, _ = X.shape
     index_pairs = jnp.array(list(combinations(range(K), 2)))
 
-    batched_numerator = vmap(single_pair_S, in_axes=(None, 0, 0, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'minus')
-    batched_denominator = vmap(single_pair_S, in_axes=(None, 0, 0, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'plus') 
+    batched_numerator = vmap(single_pair_S, in_axes=(None, 0, 0, None, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'minus', kernel)
+    batched_denominator = vmap(single_pair_S, in_axes=(None, 0, 0, None, None))(X, index_pairs[:, 0], index_pairs[:, 1], 'plus', kernel) 
 
     return jnp.sum(batched_numerator) / jnp.sum(batched_denominator) 
+
 
 def get_reg(X_train,y_train,X_test, y_test):
     regr = RidgeCV()
